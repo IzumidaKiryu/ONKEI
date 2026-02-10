@@ -12,6 +12,14 @@
       <Filter>system</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="GameCamera.cpp" />
+    <ClCompile Include="TitleState.cpp" />
+    <ClCompile Include="InGameNomalState.cpp" />
+    <ClCompile Include="InGameBossState.cpp" />
+    <ClCompile Include="InGameRythmState.cpp" />
+    <ClCompile Include="ResultState.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -19,5 +27,14 @@
       <Filter>system</Filter>
     </ClInclude>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="GameCamera.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="TitleState.h" />
+    <ClInclude Include="InGameNomalState.h" />
+    <ClInclude Include="InGameBossState.h" />
+    <ClInclude Include="InGameRythmState.h" />
+    <ClInclude Include="ResultState.h" />
+    <ClInclude Include="SoundManager.h" />
   </ItemGroup>
 </Project>
