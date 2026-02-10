@@ -1,20 +1,28 @@
-#pragma once
+#pragma once  
+#include <memory>  
+#include <stack>  
+#include "GameState.h"  
 
-#include "Level3DRender/LevelRender.h"
+//ステート管理するゲームクラス
+//ここがゲームの本体」になる
+//IgameStateを使用しているクラスのインスタンスを渡して状態を変更する
+//グッチのやつとかみたいにもっとスマートにできればなあと思ってるが一旦は完成が先かな。
+class Game : public IGameObject {  
+public:  
+	~Game();
+    bool Start() override;  
+    void Update() override;  
+    void Render(RenderContext& rc) override; // 名前空間を明示してあいまいさを解消  
 
-class Player;
+    // ステート操作  
+    void ChangeState(IGameState* nextState); // 引数もポインタに
+    void PushState(IGameState* overlayState);
+    void PopState();
 
-class Game : public IGameObject
-{
-public:
-	Game() {}
-	~Game() {}
-	bool Start();
-	void Update();
-	void Render(RenderContext& rc);
+private:  
+    IGameState* m_currentState = nullptr; // unique_ptrをやめる
+    // stackも使うなら std::stack<IGameState*> に変更
+    std::stack<IGameState*> m_stateStack;
+public:  
 
-private:
-	ModelRender m_modelRender;
-	Vector3 m_pos;
 };
-
