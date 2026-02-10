@@ -5,6 +5,7 @@
 //雑魚敵戦のインゲームステート
 class Player;
 class GameCamera;
+class EnemyManager;
 class InGameNomalState : public IGameState {
 public:
 	~InGameNomalState();
@@ -21,4 +22,5 @@ private:
     PhysicsStaticObject m_physicsStaticObject;
    
 	GameCamera* m_camera;
+	EnemyManager* m_enemyManager;
 };

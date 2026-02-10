@@ -4,15 +4,18 @@
 #include "Player.h"
 #include "GameCamera.h"
 #include "TitleState.h"
+#include "EnemyManager.h"
 
 InGameNomalState::~InGameNomalState() {
 	DeleteGO(m_player);
 	DeleteGO(m_camera);
+	DeleteGO(m_enemyManager);
 }
 
 void InGameNomalState::Initialize(Game* game) {
     m_game = game;
 	m_player = NewGO<Player>(0,"player");
+	m_enemyManager=NewGO<EnemyManager>(0, "EnemyManager");
 	m_stageModel.Init("Assets/Karimodel/stera.tkm");
 	m_physicsStaticObject.CreateFromModel(m_stageModel.GetModel(), m_stageModel.GetModel().GetWorldMatrix());
 	m_camera = NewGO<GameCamera>(0, "camera");
