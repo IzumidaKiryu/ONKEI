@@ -20,6 +20,8 @@
     <ClCompile Include="InGameRythmState.cpp" />
     <ClCompile Include="ResultState.cpp" />
     <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -36,5 +38,7 @@
     <ClInclude Include="InGameRythmState.h" />
     <ClInclude Include="ResultState.h" />
     <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyManager.h" />
   </ItemGroup>
 </Project>
