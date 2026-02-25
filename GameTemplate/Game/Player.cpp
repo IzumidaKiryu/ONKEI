@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Player.h"
-
+#include "PlayerAttack.h"
 
 #include "graphics/effect/EffectEmitter.h"
 #include "collision/CollisionObject.h"
@@ -11,7 +11,7 @@ Player::Player() {
 }
 
 Player::~Player() {
-
+	DeleteGO(m_collisionObject);
 }
 
 bool Player::Start()
@@ -30,7 +30,17 @@ bool Player::Start()
 
 	characterController.Init(25.0f, 75.0f, m_position);
 
-	
+
+	m_collisionObject = NewGO<CollisionObject>(0, "player_col");//コリジョンで取ってみよう
+
+	colpos = m_position;
+	colpos.y += 70.0f;
+	//球状のコリジョンを作成する。
+	m_collisionObject->CreateCapsule(colpos, Quaternion::Identity, 25.0f, 75.0f);
+	m_collisionObject->SetName("player_col");
+	m_collisionObject->SetPosition(m_position);
+	////コリジョンオブジェクトが自動で削除されないようにする。
+	m_collisionObject->SetIsEnableAutoDelete(false);
 	m_modelRender.Update();
 	return true;
 }
@@ -42,7 +52,9 @@ void Player::Update() {
 	Anime();
 	Attack();
 
-
+	colpos = m_position;
+	colpos.y += 70.0f;
+	m_collisionObject->SetPosition(colpos);
 	m_modelRender.Update();
 }
 
@@ -163,7 +175,12 @@ void Player::Anime() {
 
 void Player::Attack() {
 	if (g_pad[0]->IsTrigger(enButtonSelect) && m_ballView == false) {
-	
+		m_plAtk = NewGO<PlayerAttack>(0, "platk");
+		Vector3 AtkPos = m_position;
+		AtkPos.y += 70.0f;
+		m_plAtk->SetPosition(AtkPos);
+		m_plAtk->SetRotation(m_rot);
+		m_ballView = true;
 	}
 }
 
