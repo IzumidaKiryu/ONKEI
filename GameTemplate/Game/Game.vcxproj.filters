@@ -22,6 +22,7 @@
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="PlayerAttack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -40,5 +41,6 @@
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="PlayerAttack.h" />
   </ItemGroup>
 </Project>

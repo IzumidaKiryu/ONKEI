@@ -1,6 +1,8 @@
 #pragma once
 #include "sound/SoundSource.h"
-
+class PlayerAttack;
+class ItemSokudo;
+class Collision;
 class Player :public IGameObject
 {
 public:
@@ -45,7 +47,7 @@ public:
 	CharacterController characterController;
 
 	CollisionObject* m_collisionObject = nullptr;
+	PlayerAttack* m_plAtk = nullptr;
 
-	SoundSource* m_bgm = nullptr;
 };
 
