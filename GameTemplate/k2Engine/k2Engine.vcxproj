@@ -31,6 +31,7 @@
     <ClCompile Include="camera\SpringCamera.cpp" />
     <ClCompile Include="collision\CollisionObject.cpp" />
     <ClCompile Include="dbg\dbgVectorRenderer.cpp" />
+    <ClCompile Include="DiamondWipe.cpp" />
     <ClCompile Include="geometry\GeometryData.cpp" />
     <ClCompile Include="geometry\SceneGeometryData.cpp" />
     <ClCompile Include="graphics\FontRender.cpp" />
@@ -66,6 +67,7 @@
     <ClCompile Include="level2DRender\MapChip2DRender.cpp" />
     <ClCompile Include="level3DRender\LevelRender.cpp" />
     <ClCompile Include="level3DRender\MapChipRender.cpp" />
+    <ClCompile Include="LoadingCircle.cpp" />
     <ClCompile Include="nature\SkyCube.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +75,7 @@
     <ClInclude Include="camera\SpringCamera.h" />
     <ClInclude Include="collision\CollisionObject.h" />
     <ClInclude Include="dbg\dbgVectorRenderer.h" />
+    <ClInclude Include="DiamondWipe.h" />
     <ClInclude Include="geometry\GeometryData.h" />
     <ClInclude Include="geometry\SceneGeometryData.h" />
     <ClInclude Include="graphics\FontRender.h" />
@@ -106,6 +109,7 @@
     <ClInclude Include="level2DRender\MapChip2DRender.h" />
     <ClInclude Include="level3DRender\LevelRender.h" />
     <ClInclude Include="level3DRender\MapChipRender.h" />
+    <ClInclude Include="LoadingCircle.h" />
     <ClInclude Include="nature\SkyCube.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

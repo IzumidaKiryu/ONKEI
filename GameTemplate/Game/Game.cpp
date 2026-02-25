@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "TitleState.h"
+#include "Loading.h"
 
 // デストラクタ: ゲーム終了時にメモリを掃除する
 Game::~Game() {
@@ -33,19 +34,33 @@ void Game::Render(RenderContext& rc) {
 
 // シーンを完全に切り替える（古いシーンは削除）
 void Game::ChangeState(IGameState* nextState) {
-    // 1. 古いステートのメモリを解放
-    if (m_currentState) {
-        delete m_currentState;
-        m_currentState = nullptr;
-    }
+    auto* loading = NewGO<Loading>(1, "loading");
+	// ★ローディングシーンを挟む
+    loading->Init(
+        // --- 第1引数: 次のシーンを作る関数 ---
+        [=]() {
+            // 1. 古いステートのメモリを解放
+        if (m_currentState) {
+            delete m_currentState;
+            m_currentState = nullptr;
+        }
 
-    // 2. 新しいステートを現在のステートとして保持
-    m_currentState = nextState;
+        // 2. 新しいステートを現在のステートとして保持
+        m_currentState = nextState;
 
-    // 3. 新しいステートを初期化
-    if (m_currentState) {
-        m_currentState->Initialize(this);
-    }
+        // 3. 新しいステートを初期化
+        if (m_currentState) {
+            m_currentState->Initialize(this);
+        }
+     },
+
+        // --- ★第2引数: 準備完了チェック関数
+        nullptr
+
+   
+    );
+
+   
 }
 
 // 現在のシーンを保持したまま、新しいシーンを上に重ねる（例：一時停止メニュー）

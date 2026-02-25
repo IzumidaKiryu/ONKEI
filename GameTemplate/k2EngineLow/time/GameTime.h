@@ -60,6 +60,15 @@ namespace nsK2EngineLow {
 			// return 1.0f / 60.0f;
 		}
 
+		// ★★★ 追加その1: 総時間を取得する関数 ★★★
+		/// <summary>
+		/// ゲーム開始からの総経過時間を取得(単位・秒)
+		/// </summary>
+		float GetTotalTime() const
+		{
+			return m_totalTime;
+		}
+
 		/// <summary>
 		/// 1フレームの経過時間をキューにプッシュする
 		/// </summary>
@@ -100,6 +109,9 @@ namespace nsK2EngineLow {
 		{
 			m_sw.Stop();
 			PushFrameDeltaTime(static_cast<float>(m_sw.GetElapsed()));
+			// ★★★ 追加その2: ここで時間を足し込む ★★★
+			// 1フレーム終わるたびに、経過時間を総時間に足します
+			m_totalTime += GetFrameDeltaTime();
 		}
 	private:
 		friend class K2EngineLow;
@@ -108,5 +120,8 @@ namespace nsK2EngineLow {
 		float		m_frameDeltaTime = 1.0f / 60.0f;	// 1フレームの経過時間。
 		bool		m_isFixedFrameDeltaTime = false;		// 1フレームの経過時間を固定化する。
 		float		m_fixedFrameDeltaTime = 1.0f / 60.0f;	// 固定経過時間。
+
+		// ★★★ 追加その3: 変数を用意 ★★★
+		float       m_totalTime = 0.0f; // ゲーム開始からの総経過時間
 	};
 }
