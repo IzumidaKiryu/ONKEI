@@ -175,12 +175,12 @@ void Player::Anime() {
 
 void Player::Attack() {
 	if (g_pad[0]->IsTrigger(enButtonSelect) && m_ballView == false) {
-		m_plAtk = NewGO<PlayerAttack>(0, "platk");
+	/*	m_plAtk = NewGO<PlayerAttack>(0, "platk");
 		Vector3 AtkPos = m_position;
 		AtkPos.y += 70.0f;
 		m_plAtk->SetPosition(AtkPos);
 		m_plAtk->SetRotation(m_rot);
-		m_ballView = true;
+		m_ballView = true;*/
 	}
 }
 
