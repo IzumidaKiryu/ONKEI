@@ -111,6 +111,17 @@ namespace nsK2Engine {
 		/// <param name="rc">レンダーコンテキスト。</param>
 		void Draw(RenderContext& rc);
 
+
+		void SetActive(bool isActive)
+		{
+			m_isActive = isActive;
+		}
+
+		bool GetActive()
+		{
+			return m_isActive;
+		}
+
 	private:
 		/// <summary>
 		/// 2D描画パスから呼ばれる処理。
@@ -121,6 +132,8 @@ namespace nsK2Engine {
 			m_sprite.Draw(rc);
 		}
 	private:
+		
+		bool			m_isActive = true;						//3つの点の転倒のために追加。
 		Sprite			m_sprite;								//スプライト。
 		Vector3			m_position = Vector3::Zero;				//座標。
 		Quaternion		m_rotation = Quaternion::Identity;		//回転。

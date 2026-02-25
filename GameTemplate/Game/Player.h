@@ -8,6 +8,7 @@ public:
 	~Player();
 
 	bool Start() override;
+	void InitEffect();
 	void Update();
 	void Move();
 	void Rotetion();

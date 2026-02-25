@@ -230,6 +230,7 @@
     <ClCompile Include="InGameBossState.cpp" />
     <ClCompile Include="InGameNomalState.cpp" />
     <ClCompile Include="InGameRythmState.cpp" />
+    <ClCompile Include="Loading.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ResultState.cpp" />
@@ -251,6 +252,7 @@
     <ClInclude Include="InGameBossState.h" />
     <ClInclude Include="InGameNomalState.h" />
     <ClInclude Include="InGameRythmState.h" />
+    <ClInclude Include="Loading.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="ResultState.h" />
     <ClInclude Include="SoundManager.h" />
