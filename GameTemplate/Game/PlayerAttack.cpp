@@ -10,7 +10,7 @@ namespace
 	//自動削除時間。
 	const float DELETE_TIME = 0.28f;
 	const Vector3 BOX_SCALE = { 100.0f,100.0f,100.0f };
-	const Vector3 EFFECT_SCALE = { 55.0f,55.0f,55.0f };
+	const Vector3 EFFECT_SCALE = { 30.0f,30.0f,30.0f };
 }
 
 bool PlayerAttack::Start()
@@ -34,10 +34,13 @@ bool PlayerAttack::Start()
 	m_player->m_rot.Apply(m_direction);
 
 	m_direction.Normalize();
-	//プレイヤーの座標を持ってくる。
-	m_position = m_player->GetPosition();
+	// 2. ★重要：御札自体の回転もプレイヤーと同じにする
+	m_rotation = m_player->m_rot;
 
-	//移動速度の設定。
+	m_position = m_player->GetPosition();
+	m_position.y += 50.0f; // 少し高さを出す
+
+	// 3. 移動速度を「方向×スピード」で固定
 	m_moveSpeed = m_direction * m_amuletSpeed;
 
 	//コリジョンの作成。
@@ -62,14 +65,19 @@ PlayerAttack::~PlayerAttack()
 
 void PlayerAttack::Update()
 {
-	m_position += m_moveSpeed * g_gameTime->GetFrameDeltaTime() * 4.0f;
+	// 移動：単純に「現在の座標 + (速度 * 時間)」にする
+	m_position += m_moveSpeed * g_gameTime->GetFrameDeltaTime()*4.0f;
 
 	if (m_effectEmitter->GetEffect() != nullptr)
 	{
 		m_effectEmitter->SetPosition(m_position);
+		// ★エフェクトの向きもプレイヤーと同じ方向に向ける
+		m_effectEmitter->SetRotation(m_rotation);
 	}
 
 	m_collisionObj->SetPosition(m_position);
+	// コリジョンも回転を合わせる（必要であれば）
+	m_collisionObj->SetRotation(m_rotation);
 
 	// --- 追加：当たり判定の処理 ---
 	// 1. "enemy" という名前のコリジョンをすべて探す

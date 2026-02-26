@@ -6,6 +6,7 @@
 class Player;
 class GameCamera;
 class EnemyManager;
+class PlayerUI;
 class InGameNomalState : public IGameState {
 public:
 	~InGameNomalState();
@@ -19,6 +20,7 @@ private:
 	//ƒNƒ‰ƒXŒÅ—L‚Ì•Ï”
 	ModelRender m_stageModel;
 	Player* m_player;
+	PlayerUI* m_playerUI;
     PhysicsStaticObject m_physicsStaticObject;
    
 	GameCamera* m_camera;

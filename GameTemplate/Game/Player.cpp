@@ -78,7 +78,7 @@ void Player::Move() {
 	forward *= stickL.y * 300.0f;
 
 	//移動速度にスティックの入力量を加算する&加速処理。
-	m_moveSpeed += (right + forward) *= m_BaisokuCnt;
+	m_moveSpeed += (right + forward) ;
 	if (g_pad[0]->IsPress(enButtonB)) {
 		m_moveSpeed.x *= 3.0f;
 		m_moveSpeed.z *= 3.0f;
@@ -202,6 +202,12 @@ void Player::Attack() {
 	if (m_plAtk != nullptr && m_plAtk->IsDead()) {
 		m_plAtk = nullptr;
 	}
+}
+
+void Player::OnDamege(int damege)
+{
+	if (m_playerHP <= 0) return;
+	m_playerHP -= damege;
 }
 
 void Player::Render(RenderContext& rc) {
