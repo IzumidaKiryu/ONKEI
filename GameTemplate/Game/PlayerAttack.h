@@ -1,47 +1,53 @@
 #pragma once
-#include "sound/SoundSource.h"
-class Player;
+#include"graphics/effect/EffectEmitter.h"
 
+class Player;
+class GameCamera;
 class PlayerAttack :public IGameObject
 {
 public:
+	//メンバ関数。
 	PlayerAttack();
 	~PlayerAttack();
-
-	bool Start();
-
 	void Update();
+	bool Start();
+	//コリジョンの作成。
+	void CreateCollision();
+	//エフェクトの作成。
+	void CreateEffect();
 
-	Player* m_Player = nullptr;
+public:
+	//座標を取得する。
+	const Vector3& GetPosition()const
+	{
+		return m_position;
+	}
 
+	//座標をセットする。
 	void SetPosition(const Vector3& position)
 	{
 		m_position = position;
 	}
 
+	//回転をセットする。
 	void SetRotation(const Quaternion& rotation)
 	{
 		m_rotation = rotation;
 	}
 
-	void SetScale(const Vector3& scale)
-	{
-		m_scale = scale;
-	}
-
-
-	SoundSource* m_bgm = nullptr;
-
-	Player* m_player = nullptr;
-
 
 private:
-	Vector3					m_position = Vector3::Zero;			//座標。
-	Quaternion				m_rotation = Quaternion::Identity;	//回転。
-	Vector3					m_scale = Vector3::One;				//大きさ。
-	Vector3					m_moveSpeed = Vector3::Zero;		//移動速度。
-	EffectEmitter* m_effectEmitter = nullptr;			        //エフェクト。
-	float					m_timer = 0.0f;						//タイマー。
-	CollisionObject* m_coll = nullptr;
+	//メンバ変数。
+	Player* m_player;					//プレイヤー。
+	GameCamera* m_gameCamera;				//カメラ。
+	CollisionObject* m_collisionObj;				//コリジョンオブジェクト。
+	EffectEmitter* m_effectEmitter;			//エフェクト
+	const float			m_amuletSpeed = 1000.0f;	//御札の移動速度。
+	float				m_deleteTimer = 0.0f;		//削除を管理するタイマー。
+	Vector3				m_position;					//座標。
+	Vector3				m_direction;				//移動方向。
+	Vector3				m_moveSpeed;				//移動速度。
+	Vector3				m_scale = Vector3::One;		//大きさ。
+	Quaternion			m_rotation;					//回転。
 };
 
