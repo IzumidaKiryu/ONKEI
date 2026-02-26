@@ -12,7 +12,7 @@ Game::~Game() {
 bool Game::Start() {
     // 最初のシーン（タイトル画面）を生成してセット
     // unique_ptrではなく、生のポインタを new で渡す設計に変更
-    ChangeState(new TitleState());
+    FarstState(new TitleState());
     return true;
 }
 
@@ -29,6 +29,20 @@ void Game::Render(RenderContext& rc) {
     // 現在のステートに描画処理を丸投げする
     if (m_currentState) {
         m_currentState->Render(rc);
+    }
+}
+
+void Game::FarstState(IGameState* firstState)
+{
+    // 最初のシーンをセットする関数
+    // ここではローディングシーンを挟まずに直接切り替える
+    if (m_currentState) {
+        delete m_currentState;
+        m_currentState = nullptr;
+    }
+    m_currentState = firstState;
+    if (m_currentState) {
+        m_currentState->Initialize(this);
     }
 }
 

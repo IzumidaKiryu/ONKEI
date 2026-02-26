@@ -15,6 +15,7 @@ public:
     void Render(RenderContext& rc) override; // 名前空間を明示してあいまいさを解消  
 
     // ステート操作  
+	void FarstState(IGameState* firstState); // 最初のステートをセットする関数を追加
     void ChangeState(IGameState* nextState); // 引数もポインタに
     void PushState(IGameState* overlayState);
     void PopState();
