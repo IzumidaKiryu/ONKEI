@@ -174,13 +174,33 @@ void Player::Anime() {
 }
 
 void Player::Attack() {
-	if (g_pad[0]->IsTrigger(enButtonSelect) && m_ballView == false) {
-	/*	m_plAtk = NewGO<PlayerAttack>(0, "platk");
-		Vector3 AtkPos = m_position;
-		AtkPos.y += 70.0f;
-		m_plAtk->SetPosition(AtkPos);
-		m_plAtk->SetRotation(m_rot);
-		m_ballView = true;*/
+	// 例として SPACEボタン(enButtonSelect) で攻撃
+	if (g_pad[0]->IsTrigger(enButtonSelect)) {
+		// すでに攻撃オブジェクトが存在しないかチェック（連打制限）
+		// もし連打させたい場合はこのチェックを外します
+		if (m_plAtk == nullptr) {
+			// PlayerAttackを生成
+			m_plAtk = NewGO<PlayerAttack>(0, "player_attack");
+
+			// プレイヤーの現在位置と回転を渡す
+			// 攻撃の発生場所を少し前方にずらす調整
+			Vector3 attackPos = m_position;
+			attackPos.y += 100.0f; // プレイヤーの高さに合わせて調整
+			//プレイヤーの前方向に攻撃オブジェクトを配置するための調整
+			
+
+			m_plAtk->SetPosition(attackPos);
+			m_plAtk->SetRotation(m_rot);
+
+		
+			// SEの再生（SoundEngineがあるようなので）
+			// SoundEngine::GetInstance()->PlayRSE("Assets/sound/attack.wav");
+		}
+	}
+
+	// 攻撃オブジェクトが消滅していたらポインタをクリアする
+	if (m_plAtk != nullptr && m_plAtk->IsDead()) {
+		m_plAtk = nullptr;
 	}
 }
 

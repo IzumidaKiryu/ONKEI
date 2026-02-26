@@ -10,7 +10,6 @@ public:
 	~Player();
 
 	bool Start() override;
-	void InitEffect();
 	void Update();
 	void Move();
 	void Rotetion();
@@ -39,7 +38,7 @@ public:
 	int m_jumpState = 0;
 	int m_playerHP = 300;
 	int m_maxHP = m_playerHP;
-	int m_playerATK = 1;
+	int m_playerATK = 10;
 
 	float m_BaisokuCnt = 1.0f;//外から速度UPさせるための変数。
 
@@ -50,5 +49,12 @@ public:
 	CollisionObject* m_collisionObject = nullptr;
 	PlayerAttack* m_plAtk = nullptr;
 
+public:
+	// プレイヤーの位置を取得する。PlayerAttack などから呼ばれている GetPosition と整合させるために追加。
+	// 既存のメンバ変数名に合わせて内部参照を調整してください。
+	const Vector3& GetPosition() const
+	{
+		return m_position;
+	}
 };
 

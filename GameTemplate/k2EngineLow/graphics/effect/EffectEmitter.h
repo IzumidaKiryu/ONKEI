@@ -95,6 +95,23 @@ namespace nsK2EngineLow {
 		{
 			return m_effect.IsPlay();
 		}
+
+		/// <summary>
+		/// 内部のEffectオブジェクトへのポインタを返す。
+		/// PlayerAttack.cpp 側で nullptr チェックを行っているため、存在確認が必要な場合はこのメソッドを使用する。
+		/// ※注意: m_effect はメンバ変数なので常に非nullptrを返します。もし内部で外部リソース(Effekseer::Effect 等)の有無を
+		/// 判定したい場合は Effect クラス側に該当の取得／判定メソッドを実装してください。
+		/// </summary>
+		Effect* GetEffect()
+		{
+			return &m_effect;
+		}
+
+		const Effect* GetEffect() const
+		{
+			return &m_effect;
+		}
+
 	private:
 		Effect m_effect;					//エフェクト。
 	};
