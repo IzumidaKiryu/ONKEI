@@ -16,6 +16,7 @@ public:
 	void Anime();
 	void State();
 	void Attack();
+	void OnDamege(int damege);
 	void Render(RenderContext& rc);
 
 	enum EnAnimationClip {
@@ -40,7 +41,6 @@ public:
 	int m_maxHP = m_playerHP;
 	int m_playerATK = 10;
 
-	float m_BaisokuCnt = 1.0f;//ŠO‚©‚ç‘¬“xUP‚³‚¹‚é‚½‚ß‚Ì•Ï”B
 
 	bool m_ballView = false;
 

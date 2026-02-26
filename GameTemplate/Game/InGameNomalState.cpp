@@ -5,6 +5,7 @@
 #include "GameCamera.h"
 #include "TitleState.h"
 #include "EnemyManager.h"
+#include "PlayerUI.h"
 
 InGameNomalState::~InGameNomalState() {
 	DeleteGO(m_player);
@@ -19,7 +20,7 @@ void InGameNomalState::Initialize(Game* game) {
 	m_stageModel.Init("Assets/modelData/RPGGround/bg.tkm");
 	m_physicsStaticObject.CreateFromModel(m_stageModel.GetModel(), m_stageModel.GetModel().GetWorldMatrix());
 	m_camera = NewGO<GameCamera>(0, "camera");
-
+	m_playerUI = NewGO<PlayerUI>(0, "playerUI");
     g_camera3D->SetPosition(Vector3(-700.0f, 500.0f, 100.0f));
 }
 

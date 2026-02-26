@@ -23,6 +23,8 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="PlayerAttack.cpp" />
+    <ClCompile Include="Loading.cpp" />
+    <ClCompile Include="PlayerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -42,5 +44,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="PlayerAttack.h" />
+    <ClInclude Include="Loading.h" />
+    <ClInclude Include="PlayerUI.h" />
   </ItemGroup>
 </Project>

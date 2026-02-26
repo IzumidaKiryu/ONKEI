@@ -234,6 +234,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAttack.cpp" />
+    <ClCompile Include="PlayerUI.cpp" />
     <ClCompile Include="ResultState.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -256,6 +257,7 @@
     <ClInclude Include="Loading.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAttack.h" />
+    <ClInclude Include="PlayerUI.h" />
     <ClInclude Include="ResultState.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="stdafx.h" />
