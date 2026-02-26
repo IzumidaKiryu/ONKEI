@@ -71,16 +71,37 @@ void PlayerAttack::Update()
 
 	m_collisionObj->SetPosition(m_position);
 
+	// --- 追加：当たり判定の処理 ---
+	// 1. "enemy" という名前のコリジョンをすべて探す
+	const auto& enemyObjects = g_collisionObjectManager->FindMatchForwardNameCollisionObjects("enemy");
 
+	for (auto enemyCol : enemyObjects) {
+		// 2. 自分のコリジョンと敵のコリジョンが接触しているか
+		if (m_collisionObj->IsHit(enemyCol)) {
+			// 3. 当たった相手の「本体（Enemyクラス）」を探す
+			Enemy* enemy = FindGO<Enemy>(enemyCol->GetName());
+			if (enemy) {
+				// ダメージを与える
+				enemy->OnDamage(m_player->m_playerATK);
 
-	//自動削除タイマー。
+				// 御札を消す
+				m_effectEmitter->Stop();
+				DeleteGO(this);
+				return; // ★自分を消したので、この後の処理（タイマー等）は行わずに終了
+			}
+		}
+	}
+	// ----------------------------
+
+	// 自動削除タイマー。
 	m_deleteTimer += g_gameTime->GetFrameDeltaTime();
-	//時間経過で削除する。
+	// 時間経過で削除する。
 	if (m_deleteTimer >= DELETE_TIME)
 	{
-		//エフェクトの停止。
+		// エフェクトの停止。
 		m_effectEmitter->Stop();
 		DeleteGO(this);
+		return; // 安全のため return
 	}
 }
 
