@@ -14,6 +14,8 @@ public:
     void Update(Game* game) override;
     void Render(RenderContext& rc) override;
 	//クラス固有の関数
+	void UpdateSPButton();//SPボタンの状態を更新する関数。SPボタンが押せる状態かどうかを更新する。(割合計算もこの関数内で行い描画の差異を出す。)
+
 
 private:
 	Game* m_game;//切り替えに使用(もっといい方法ある気がする...)
@@ -25,4 +27,11 @@ private:
    
 	GameCamera* m_camera;
 	EnemyManager* m_enemyManager;
+
+	float m_currentSP = 0.0f; // 現在の信仰値
+	float m_maxSP = 100.0f; // 最大信仰値
+
+	bool m_isGameOver = false; // ゲームオーバーフラグ
+	bool m_isGameClear = false; // ゲームクリアフラグ
+	bool m_isSPButtonIsReady = false; // SPボタンが押セル状態かどうかのフラグ（trueの時は押せる）。
 };
