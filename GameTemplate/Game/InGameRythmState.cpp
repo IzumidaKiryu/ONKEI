@@ -16,7 +16,7 @@ void InGameRythmState::Initialize(Game* game)
 
 void InGameRythmState::Update(Game* game)
 {
-    m_timer += g_gameTime->GetFrameDeltaTime(); // 仮: デルタタイム取得関数
+    m_timer += g_gameTime->GetFrameDeltaTime(); // デルタタイム取得関数
 
     switch (m_phase)
     {

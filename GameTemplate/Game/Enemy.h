@@ -9,6 +9,7 @@ enum EnAnimationClip {
 	m_enAnimClip_Death,  // 死亡
     m_enAnimClip_Num,
 };
+class EnemyManager;
 class Enemy : public IGameObject {
 public:
     bool Start() override;
@@ -25,5 +26,5 @@ private:
     AnimationClip m_animationClips[m_enAnimClip_Num];
     int m_enemyState = EnAnimationClip::m_enAnimClip_Idle; // 0:待機, 1:移動, 2:攻撃
 	int m_hp = 10;
-
+	EnemyManager* m_enemyManager = nullptr; // 自分を管理している EnemyManager へのポインタ
 };
