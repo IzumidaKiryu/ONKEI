@@ -14,12 +14,11 @@ public:
     bool Start() override;
     void Update() override;
     void Render(RenderContext& rc) override;
-
+    Vector3 m_position = Vector3::Zero;
     void OnDamage(int damage);
 
 private:
     ModelRender m_modelRender;
-    Vector3 m_position = Vector3::Zero;
     Player* m_player = nullptr; // í«Ç¢Ç©ÇØÇÈëŒè€
     CharacterController m_charaCon;
 	CollisionObject* m_collisionObject = nullptr;

@@ -20,6 +20,7 @@ void InGameNomalState::Initialize(Game* game) {
     m_game = game;
 	m_player = NewGO<Player>(0,"player");
 	m_enemyManager=NewGO<EnemyManager>(0, "EnemyManager");
+	m_enemyManager->Init();
 	m_stageModel.Init("Assets/modelData/RPGGround/bg.tkm");
 	m_physicsStaticObject.CreateFromModel(m_stageModel.GetModel(), m_stageModel.GetModel().GetWorldMatrix());
 	m_camera = NewGO<GameCamera>(0, "camera");
