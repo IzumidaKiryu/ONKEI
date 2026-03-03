@@ -3,6 +3,7 @@
 class PlayerAttack;
 class ItemSokudo;
 class Collision;
+class InGameNomalState;
 class Player :public IGameObject
 {
 public:
@@ -18,6 +19,8 @@ public:
 	void Attack();
 	void OnDamege(int damege);
 	void Render(RenderContext& rc);
+	// 親をセットする関数
+	void SetParentState(InGameNomalState* parent) { m_parentState = parent; }
 
 	enum EnAnimationClip {
 		m_enAnimClip_Idle,
@@ -56,5 +59,7 @@ public:
 	{
 		return m_position;
 	}
+private:
+	InGameNomalState* m_parentState = nullptr;
 };
 

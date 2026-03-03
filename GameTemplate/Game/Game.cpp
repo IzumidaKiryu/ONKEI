@@ -80,6 +80,8 @@ void Game::ChangeState(IGameState* nextState) {
 // 現在のシーンを保持したまま、新しいシーンを上に重ねる（例：一時停止メニュー）
 void Game::PushState(IGameState* overlayState) {
     if (m_currentState) {
+        // 1. 今のステートを止める（例：Updateをスキップするフラグを立てるなど）
+        m_currentState->OnPause();
         m_stateStack.push(m_currentState);
     }
     m_currentState = overlayState;
@@ -98,5 +100,7 @@ void Game::PopState() {
     if (!m_stateStack.empty()) {
         m_currentState = m_stateStack.top();
         m_stateStack.pop();
+        // 2. 戻ってきたステートを再開させる
+        m_currentState->OnResume();
     }
 }

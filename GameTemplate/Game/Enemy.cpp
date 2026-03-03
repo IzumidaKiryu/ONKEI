@@ -39,6 +39,7 @@ bool Enemy::Start() {
 
 void Enemy::Update() {
     if (!m_player) return;
+    if (m_enemyManager->IsActive() == false)return;
 
     Vector3 diff = m_player->m_position - m_position;
     diff.y = 0.0f;

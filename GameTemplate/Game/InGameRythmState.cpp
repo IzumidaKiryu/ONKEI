@@ -1,16 +1,57 @@
 #include "stdafx.h"
 #include "InGameRythmState.h"
 #include "Game.h"
+#include "RythmGame.h"
+#include "fstream"
+#include "k2EngineLowPreCompile.h"
+#include <random>  // これを追加
 
 //リズムゲームのステート
 //順番：カットイン→五線譜拡大→リズムゲーム→終了→通常のゲームに戻る
 //「私の歌があなたを導く…！」
+SongData InGameRythmState::LoadSong(const std::string& filePath) {
+    std::ifstream ifs(filePath);
+   nlohmann::json j;
+    ifs >> j;
+
+    for (auto& v : j["songs"]) {
+        SongData song;
+        song.id = v.value("id", 0);
+        song.title = v.value("title", "");
+        song.artist = v.value("artist", "");
+        song.jacketPath = v.value("jacket", "");
+        song.selsectPath = v.value("select", "");
+        song.audioPath = v.value("audio", "");
+        song.jsonPath = v.value("json", "");
+        m_songList.push_back(song);
+    }
+
+    return m_songList[0];
+}
 
 void InGameRythmState::Initialize(Game* game)
 {
     m_game = game;
     m_phase = RythmPhase::CutIn;
     m_timer = 0.0f;
+
+    // 1. 楽曲データを全件読み込む
+    LoadSong("Assets/Json/songData.json");
+
+    // 2. リストが空でないかチェック
+    if (!m_songList.empty()) {
+        // 3. 乱数生成器の用意（メルセンヌ・ツイスタ）
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        // 0 から (曲数 - 1) までの範囲でランダムな数を作る
+        std::uniform_int_distribution<> dis(0, static_cast<int>((m_songList.size() - 1)%3));
+
+        int randomIndex = dis(gen);
+
+        // 4. 選ばれた曲を渡して初期化
+        m_rythmGame = NewGO<RythmGame>(0, "RythmGame");
+        m_rythmGame->Init(m_songList[randomIndex].jsonPath.c_str()); // ここでランダムな1曲を渡す
+    }
 
 }
 

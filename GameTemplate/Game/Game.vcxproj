@@ -142,6 +142,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -227,16 +228,21 @@
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameCamera.cpp" />
+    <ClCompile Include="HItEffect.cpp" />
     <ClCompile Include="InGameBossState.cpp" />
     <ClCompile Include="InGameNomalState.cpp" />
     <ClCompile Include="InGameRythmState.cpp" />
     <ClCompile Include="Loading.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Note.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAttack.cpp" />
     <ClCompile Include="PlayerUI.cpp" />
+    <ClCompile Include="ReadJSON.cpp" />
     <ClCompile Include="ResultState.cpp" />
+    <ClCompile Include="RythmGame.cpp" />
     <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="Stage.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -246,20 +252,26 @@
     <ClCompile Include="TitleState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Chart.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameCamera.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="HitEffect.h" />
     <ClInclude Include="InGameBossState.h" />
     <ClInclude Include="InGameNomalState.h" />
     <ClInclude Include="InGameRythmState.h" />
     <ClInclude Include="Loading.h" />
+    <ClInclude Include="Note.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAttack.h" />
     <ClInclude Include="PlayerUI.h" />
+    <ClInclude Include="ReadJSON.h" />
     <ClInclude Include="ResultState.h" />
+    <ClInclude Include="RythmGame.h" />
     <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="Stage.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
     <ClInclude Include="TitleState.h" />

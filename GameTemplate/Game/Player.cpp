@@ -5,6 +5,7 @@
 #include "graphics/effect/EffectEmitter.h"
 #include "collision/CollisionObject.h"
 #include "sound/SoundEngine.h"
+#include "InGameNomalState.h"
 
 
 Player::Player() {
@@ -46,16 +47,22 @@ bool Player::Start()
 }
 
 void Player::Update() {
-	Move();
-	Rotetion();
-	State();
-	Anime();
-	Attack();
+	// 1. 親がいない、または親がアクティブでない（Deactivateされている）なら何もしない
+	if (!m_parentState || !m_parentState->IsActive()) {
+		return;
+	}
 
-	colpos = m_position;
-	colpos.y += 70.0f;
-	m_collisionObject->SetPosition(colpos);
-	m_modelRender.Update();
+		Move();
+		Rotetion();
+		State();
+		Anime();
+		Attack();
+
+		colpos = m_position;
+		colpos.y += 70.0f;
+		m_collisionObject->SetPosition(colpos);
+		m_modelRender.Update();
+	
 }
 
 void Player::Move() {
