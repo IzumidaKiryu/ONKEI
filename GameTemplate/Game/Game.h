@@ -19,7 +19,7 @@ public:
     void ChangeState(IGameState* nextState); // 引数もポインタに
     void PushState(IGameState* overlayState);
     void PopState();
-
+    IGameState* GetCurrentState() { return m_currentState; }
 private:  
     IGameState* m_currentState = nullptr; // unique_ptrをやめる
     // stackも使うなら std::stack<IGameState*> に変更

@@ -1,0 +1,23 @@
+{
+  "songName": "Assets/songs/Borara.wav",
+  "bpm": 120,
+  "offset": 0,
+  "notes": [
+    { "time": 1.0, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 3.0, "lane": 1, "type": "tap", "duration": 0.0 },
+    { "time": 3.0, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 4.0, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 4.1, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 4.2, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 4.3, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 4.4, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 4.5, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 6.0, "lane": 1, "type": "long","duration": 2.0 },
+    { "time": 8.0, "lane": 1, "type": "tap", "duration": 0.0 },
+    { "time": 9.0, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 9.0, "lane": 1, "type": "tap", "duration": 0.0 },
+    { "time": 11.0, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 12.0, "lane": 0, "type": "tap", "duration": 0.0 },
+    { "time": 12.0, "lane": 1, "type": "tap", "duration": 0.0 }
+  ]
+}

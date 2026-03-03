@@ -8,6 +8,7 @@
 #include "ResultState.h"
 #include "InGameBossState.h"
 #include "InGameRythmState.h"
+#include "Stage.h"
 namespace
 {
 	int CREACOUNT=5; // 軟体倒したらクリアにするか変数
@@ -23,13 +24,20 @@ InGameNomalState::~InGameNomalState() {
 void InGameNomalState::Initialize(Game* game) {
     m_game = game;
 	m_player = NewGO<Player>(0,"player");
+	// 「あなたの親は私（NormalState）ですよ」と教える
+	m_player->SetParentState(this);
+
 	m_enemyManager=NewGO<EnemyManager>(0, "EnemyManager");
 	m_enemyManager->Init();
-	m_stageModel.Init("Assets/modelData/RPGGround/bg.tkm");
-	m_physicsStaticObject.CreateFromModel(m_stageModel.GetModel(), m_stageModel.GetModel().GetWorldMatrix());
+
 	m_camera = NewGO<GameCamera>(0, "camera");
 	m_playerUI = NewGO<PlayerUI>(0, "playerUI");
     g_camera3D->SetPosition(Vector3(-700.0f, 500.0f, 100.0f));
+	// Stageを生成（NewGOはエンジンのリストに登録する関数）
+	stage = NewGO<Stage>(0, "Stage");
+
+	// 自分を親としてセットする
+	stage->SetParentState(this);
 }
 
 void InGameNomalState::Update(Game* game) {
@@ -48,17 +56,37 @@ void InGameNomalState::Update(Game* game) {
 		return;
 	}
 	//SPボタンが押せる状態でLB1が押されたらSPボタンを発動させる
-	if (m_isSPButtonIsReady && g_pad[0]->IsTrigger(enButtonLB1)) {//ボタンは変える！
+	if (m_isSPButtonIsReady && g_pad[0]->IsTrigger(enButtonDown)) {//ボタンは変える！
 		//SPボタンの発動処理をここに書く
 		m_game->PushState(new InGameRythmState());
 		m_isSPButtonIsReady = false; // SPボタンを使用したので、再度押せるようになるまでフラグをfalseにする
 	}
 
-	m_stageModel.Update();
 }
 
 void InGameNomalState::Render(RenderContext& rc) {
-	m_stageModel.Draw(rc);
+
+}
+
+void InGameNomalState::OnPause()
+{
+	//自分がNewGOしたクラスたちもDeActiveteする。
+	//PlayerとStageは親管理でUpdateを止めるようにしているため、Deactivateする必要はない。
+	//他のもおんなじにしてもよさそう。
+	
+	m_camera->Deactivate();
+	m_enemyManager->Deactivate();
+	m_playerUI->Deactivate();
+	this->Deactivate(); // ステートを非アクティブにする
+}
+
+void InGameNomalState::OnResume()
+{
+	//自分がNewGOしたクラスたちもDeActiveteされているはずなので、必要に応じてそれらもActivateする
+	m_camera->Activate();
+	m_enemyManager->Activate();
+	m_playerUI->Activate();
+	this->Activate(); // ステートをアクティブにする
 }
 
 void InGameNomalState::UpdateSPButton()

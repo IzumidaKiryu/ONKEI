@@ -17,3 +17,13 @@ void InGameBossState::Update(Game* game)
 void InGameBossState::Render(RenderContext& rc)
 {
 }
+
+void InGameBossState::OnPause()
+{
+	this->Deactivate(); // ステートを非アクティブにする
+}
+
+void InGameBossState::OnResume()
+{
+	this->Activate(); // ステートをアクティブにする
+}

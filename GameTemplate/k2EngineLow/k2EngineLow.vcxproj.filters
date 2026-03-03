@@ -514,6 +514,12 @@
     <ClInclude Include="HID\GamePadVibration.h">
       <Filter>HID</Filter>
     </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="json_fwd.hpp">
+      <Filter>nlohmann</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="graphics">
@@ -575,6 +581,9 @@
     </Filter>
     <Filter Include="dxc">
       <UniqueIdentifier>{496d48ba-26ca-419f-9db8-b1cea244c1c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="nlohmann">
+      <UniqueIdentifier>{ec3d4477-e44b-46e8-b507-b3283e609caa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

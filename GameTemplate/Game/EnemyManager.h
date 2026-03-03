@@ -1,5 +1,6 @@
 #pragma once
 #include "Enemy.h"
+
 class EnemyManager : public IGameObject {
 public:
     void Init();

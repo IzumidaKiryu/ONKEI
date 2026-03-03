@@ -157,6 +157,54 @@ namespace nsK2EngineLow {
 		{
 			return &m_dspSettings;
 		}
+
+		//追加
+		/// <summary>
+		/// 再生経過時間（秒）を取得
+		/// </summary>
+		float GetPlayTime() const
+		{
+			if (m_sourceVoice == nullptr || m_waveFile == nullptr) {
+				return 0.0f;
+			}
+
+			XAUDIO2_VOICE_STATE state{};
+			m_sourceVoice->GetState(&state);
+
+			auto format = m_waveFile->GetFormat();
+			if (format == nullptr || format->nSamplesPerSec == 0) {
+				return 0.0f;
+			}
+
+			// SamplesPlayed は今まで再生したサンプル数
+			UINT64 samplesPlayed = state.SamplesPlayed;
+
+			// サンプル数 ÷ サンプリングレート で「秒」に変換
+			return static_cast<float>(samplesPlayed) / static_cast<float>(format->nSamplesPerSec);
+		}
+
+		/// <summary>
+		/// サウンドの全長（秒）を取得
+		/// </summary>
+		float GetTotalTime() const
+		{
+			if (m_waveFile == nullptr) {
+				return 0.0f;
+			}
+
+			// 波形データのフォーマットとサイズを取得
+			auto format = m_waveFile->GetFormat();
+			unsigned int totalByteSize = m_waveFile->GetSize();
+
+			if (format == nullptr || format->nAvgBytesPerSec == 0) {
+				return 0.0f;
+			}
+
+			// 全体のバイト数 ÷ 1秒あたりの平均バイト数 ＝ 全体の秒数
+			return static_cast<float>(totalByteSize) / static_cast<float>(format->nAvgBytesPerSec);
+		}
+		//追加
+
 	private:
 		/// <summary>
 		/// 初期化。

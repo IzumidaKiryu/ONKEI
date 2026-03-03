@@ -4,6 +4,9 @@
     <Filter Include="system">
       <UniqueIdentifier>{22dd8095-74f9-46df-81a1-36675a040b1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RythmGame">
+      <UniqueIdentifier>{75dbed72-0cb9-4364-80cf-e3641b077f41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -25,6 +28,19 @@
     <ClCompile Include="PlayerAttack.cpp" />
     <ClCompile Include="Loading.cpp" />
     <ClCompile Include="PlayerUI.cpp" />
+    <ClCompile Include="RythmGame.cpp">
+      <Filter>RythmGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Note.cpp">
+      <Filter>RythmGame</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadJSON.cpp">
+      <Filter>RythmGame</Filter>
+    </ClCompile>
+    <ClCompile Include="HItEffect.cpp">
+      <Filter>RythmGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -46,5 +62,21 @@
     <ClInclude Include="PlayerAttack.h" />
     <ClInclude Include="Loading.h" />
     <ClInclude Include="PlayerUI.h" />
+    <ClInclude Include="RythmGame.h">
+      <Filter>RythmGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Note.h">
+      <Filter>RythmGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Chart.h">
+      <Filter>RythmGame</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadJSON.h">
+      <Filter>RythmGame</Filter>
+    </ClInclude>
+    <ClInclude Include="HitEffect.h">
+      <Filter>RythmGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage.h" />
   </ItemGroup>
 </Project>
