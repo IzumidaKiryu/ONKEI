@@ -8,6 +8,10 @@
 #include "ResultState.h"
 #include "InGameBossState.h"
 #include "InGameRythmState.h"
+namespace
+{
+	int CREACOUNT=5; // 軟体倒したらクリアにするか変数
+}
 
 InGameNomalState::~InGameNomalState() {
 	DeleteGO(m_player);
@@ -29,14 +33,18 @@ void InGameNomalState::Initialize(Game* game) {
 }
 
 void InGameNomalState::Update(Game* game) {
+
+	StageClear();
 	//ゲームオーバー、ゲームクリアのフラグが立っているかを確認して、立っていたらそれぞれのステートに遷移する
 	if(m_isGameOver==true){
 		m_game->ChangeState(new ResultState(ResultState::ResultType::enGameOver));
+		m_isGameOver = false; // フラグをリセットしておく（次のプレイでゲームオーバーになったときに正しく遷移するように）
 		return;
 	}
 	else if(m_isGameClear==true){
 		//Boss戦のステートに遷移する予定
 		m_game->ChangeState(new InGameBossState());
+		m_isGameClear = false; // フラグをリセットしておく（次のプレイでゲームクリアになったときに正しく遷移するように）
 		return;
 	}
 	//SPボタンが押せる状態でLB1が押されたらSPボタンを発動させる
@@ -55,4 +63,13 @@ void InGameNomalState::Render(RenderContext& rc) {
 
 void InGameNomalState::UpdateSPButton()
 {
+}
+
+void InGameNomalState::StageClear()
+{
+	if (CREACOUNT <= m_enemyManager->GetDeathCount()&&m_isChangeIsReady==false) {
+				m_isGameClear = true;
+				m_isChangeIsReady = true; // ステート遷移が発動したことを示すフラグを立てる
+	}
+	
 }

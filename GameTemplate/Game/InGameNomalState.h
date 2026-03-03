@@ -15,7 +15,7 @@ public:
     void Render(RenderContext& rc) override;
 	//クラス固有の関数
 	void UpdateSPButton();//SPボタンの状態を更新する関数。SPボタンが押せる状態かどうかを更新する。(割合計算もこの関数内で行い描画の差異を出す。)
-
+	void StageClear();//ステージクリア処理。ゲームクリアフラグを立てる。
 
 private:
 	Game* m_game;//切り替えに使用(もっといい方法ある気がする...)
@@ -34,4 +34,5 @@ private:
 	bool m_isGameOver = false; // ゲームオーバーフラグ
 	bool m_isGameClear = false; // ゲームクリアフラグ
 	bool m_isSPButtonIsReady = false; // SPボタンが押セル状態かどうかのフラグ（trueの時は押せる）。
+	bool m_isChangeIsReady = false; // ステート遷移が発動したかどうかのフラグ（trueの時は遷移が発動している）。遷移が発動している間はUpdate内で遷移処理を行わないようにするためのフラグ。
 };

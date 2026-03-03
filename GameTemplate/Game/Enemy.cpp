@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Enemy.h"
 #include "Player.h"
+#include "EnemyManager.h"
 
 bool Enemy::Start() {
     // 1. ©•ª©g‚É–¼‘O‚ğ•t‚¯‚é (FindGO ‚ÅŒ©‚Â‚¯‚ç‚ê‚é‚æ‚¤‚É‚·‚é‚½‚ß)
@@ -31,6 +32,8 @@ bool Enemy::Start() {
     m_player = FindGO<Player>("player");
 
     m_charaCon.Init(25.0f, 75.0f, m_position);
+
+    m_enemyManager = FindGO<EnemyManager>("EnemyManager");
     return true;
 }
 
@@ -46,6 +49,7 @@ void Enemy::Update() {
     {
         m_enemyState = 3; // €–S
         if (m_modelRender.IsPlayingAnimation() == false);
+		m_enemyManager->CountUpDeathCount();
 		DeleteGO(this);
     }
 
