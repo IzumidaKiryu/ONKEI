@@ -36,10 +36,10 @@ public:
 	/// <param name="isAC">アピールチャンス中か否か</param>
 	/// <param name="isSP">スペシャル発動後３秒いないか否か</param>
 	void CalcScore(/*int charaBaseScore,*/ /*int comboCount,*/ int judgeType, int staminaType, /*int criLevel,*/ bool isAC, bool isSP);
-
+	// 終了したか確認するメンバ関数
+	bool IsFinished() const { return m_isFinished; }
 private:
-	SpriteRender m_judgmentiCrcularLeft;
-	SpriteRender m_judgmentiCrcularRight;
+	SpriteRender m_judgmentiCrcule;
 	// 判定結果表示用
 	SpriteRender m_judgmentText;
 	std::string m_currentJudgment; // 現在の判定結果
@@ -52,7 +52,7 @@ private:
 	SoundSource* m_perfectSound = nullptr;
 	SoundSource* m_SPSound = nullptr;
 	void PlaySE();
-
+	bool m_isFinished = false;
 private:
 	ChartData m_chart; // チャートデータ
 	std::vector<Note*> m_notes; // ノーツオブジェクトのリスト
@@ -82,6 +82,7 @@ private:
 	SpriteRender m_greatText;
 	SpriteRender m_goodText;
 	SpriteRender m_missText;
+	SpriteRender m_backSprite;
 
 	FontRender m_comboFont;
 	FontRender m_getScoreFont;
@@ -100,6 +101,7 @@ public:
 
 private:
 	std::string m_songName;
+	bool m_wasLeftKeyHeld = false; // 前フレームの入力状態
 };
 
 

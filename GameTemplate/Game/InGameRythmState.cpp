@@ -50,7 +50,7 @@ void InGameRythmState::Initialize(Game* game)
 
         // 4. 選ばれた曲を渡して初期化
         m_rythmGame = NewGO<RythmGame>(0, "RythmGame");
-        m_rythmGame->Init(m_songList[randomIndex].jsonPath.c_str()); // ここでランダムな1曲を渡す
+        m_rythmGame->Init(m_songList[2].jsonPath.c_str()); // ここでランダムな1曲を渡す
     }
 
 }
@@ -69,6 +69,12 @@ void InGameRythmState::Update(Game* game)
         break;
     case RythmPhase::Gameplay:
         UpdateGameplay();
+        // ★ ここでチェック！
+        // RythmGameが終了（Deactivate）していたら、Endフェーズへ移行させる
+        if (m_rythmGame != nullptr && m_rythmGame->IsFinished()) {
+			DeleteGO(m_rythmGame); // 終了したリズムゲームオブジェクトを削除
+            m_phase = RythmPhase::End;
+        }
         break;
     case RythmPhase::End:
         FinishRythm();
@@ -119,19 +125,14 @@ void InGameRythmState::UpdateStaffZoom()
 void InGameRythmState::UpdateGameplay()
 {
     // TODO: ノーツ判定・判定UI更新
-    // 仮: タイムアップで終了
-    if (/* ゲーム終了判定 */ false)
-    {
-        m_isClear = true/* 判定結果 */;
-        m_phase = RythmPhase::End;
-    }
 }
 
 void InGameRythmState::FinishRythm()
 {
-    // InGameNormalStateに戻す or ResultStateへ
-    m_game->PopState(); // リズムゲーム終了後、通常のゲームに戻る
     
+        // InGameNormalStateに戻す or ResultStateへ
+        m_game->PopState(); // リズムゲーム終了後、通常のゲームに戻る
+
  
 }
 
@@ -148,4 +149,6 @@ void InGameRythmState::DrawStaffZoom(RenderContext& rc)
 void InGameRythmState::DrawGameplay(RenderContext& rc)
 {
     // ノーツ・判定UI描画
+	// リズムゲームの描画を呼び出す
+	//m_rythmGame->Render(rc);
 }
