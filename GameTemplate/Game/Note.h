@@ -19,8 +19,8 @@ public:
 	int GetLane() const { return m_data.lane; }
 	const std::string& GetType() const { return m_data.type; }
 	float GetYPos() const { return m_yPos; } // Y座標を取得するメソッドを追加
-
-	// 判定用のメソッド
+	// X座標を取得するメソッドを追加（必要に応じて）  
+	float GetXPos() const { return m_sprite.GetPosition().x; }	// 判定用のメソッド
 	bool IsInJudgmentRange() const;
 	void SetJudged(bool judged) { m_isJudged = judged; }
 public:
@@ -46,7 +46,9 @@ public:
 	bool IsLongNoteStartInJudgmentRange() const;
 	bool IsLongNoteEndInJudgmentRange() const;
 	bool IsLongNoteInProgress() const;
-
+	Vector3 GetLongNoteEndPosition() const {
+		return m_longNoteEnd.GetPosition();
+	}
 	// ロングノーツの描画用メソッド
 	void RenderLongNote(RenderContext& rc);
 
@@ -76,8 +78,7 @@ public:
 	void SetXPos(float xPos) { m_xPos = xPos; }
 	// Y座標を設定するメソッドを追加  
 	void SetYPos(float yPos) { m_yPos = yPos; }
-	// X座標を取得するメソッドを追加（必要に応じて）  
-	float GetXPos() const { return m_xPos; }
+
 	// オフセットを設定するメソッドを追加
 	void SetOffset(float offset) { m_offset = offset; }
 
