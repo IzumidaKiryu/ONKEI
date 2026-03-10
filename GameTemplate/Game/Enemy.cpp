@@ -1,106 +1,181 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Enemy.h"
 #include "Player.h"
 #include "EnemyManager.h"
 
+
 bool Enemy::Start() {
-    // 1. ©•ª©g‚É–¼‘O‚ğ•t‚¯‚é (FindGO ‚ÅŒ©‚Â‚¯‚ç‚ê‚é‚æ‚¤‚É‚·‚é‚½‚ß)
+
+    // 1. è‡ªåˆ†è‡ªèº«ã«åå‰ã‚’ä»˜ã‘ã‚‹ (FindGO ã§è¦‹ã¤ã‘ã‚‰ã‚Œã‚‹ã‚ˆã†ã«ã™ã‚‹ãŸã‚)
     SetName("enemy");
-    // ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ[ƒh
+
+    // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ­ãƒ¼ãƒ‰
     m_animationClips[m_enAnimClip_Idle].Load("Assets/Karimodel/SkeletonAnim/SkeletonIdle.tka");
     m_animationClips[m_enAnimClip_Idle].SetLoopFlag(true);
     m_animationClips[m_enAnimClip_Walk].Load("Assets/Karimodel/SkeletonAnim/SkeletonWalk.tka");
     m_animationClips[m_enAnimClip_Walk].SetLoopFlag(true);
     m_animationClips[m_enAnimClip_Attack].Load("Assets/Karimodel/SkeletonAnim/SkeletonAttack.tka");
-    m_animationClips[m_enAnimClip_Attack].SetLoopFlag(false); // UŒ‚‚Í1‰ñ‚¸‚Â
+    m_animationClips[m_enAnimClip_Attack].SetLoopFlag(false); // æ”»æ’ƒã¯1å›ãšã¤
     m_animationClips[m_enAnimClip_Death].Load("Assets/Karimodel/SkeletonAnim/SkeletonDeath.tka");
     m_animationClips[m_enAnimClip_Death].SetLoopFlag(false); 
-    m_modelRender.Init("Assets/KariModel/Skeleton/Skeleton.tkm", m_animationClips, m_enAnimClip_Num); // “G‚Ìƒ‚ƒfƒ‹
+    m_modelRender.Init("Assets/KariModel/Skeleton/Skeleton.tkm", m_animationClips, m_enAnimClip_Num); // æ•µã®ãƒ¢ãƒ‡ãƒ«
 	m_modelRender.SetScale({ 15.0f, 15.0f, 15.0f });
-    m_position = { 500.0f, 0.0f, 500.0f }; // ‰ŠúˆÊ’u
+    m_position = { 500.0f, 0.0f, 500.0f }; // åˆæœŸä½ç½®
 
-    // 2. “–‚½‚è”»’è—pƒRƒŠƒWƒ‡ƒ“‚Ìì¬
+    // 2. å½“ãŸã‚Šåˆ¤å®šç”¨ã‚³ãƒªã‚¸ãƒ§ãƒ³ã®ä½œæˆ
     m_collisionObject = NewGO<CollisionObject>(0);
-    // ƒ{ƒbƒNƒXŒ`ó‚ğì¬ (ƒTƒCƒY‚Íƒ‚ƒfƒ‹‚É‡‚í‚¹‚Ä’²®‚µ‚Ä‚­‚¾‚³‚¢)
+    // ãƒœãƒƒã‚¯ã‚¹å½¢çŠ¶ã‚’ä½œæˆ (ã‚µã‚¤ã‚ºã¯ãƒ¢ãƒ‡ãƒ«ã«åˆã‚ã›ã¦èª¿æ•´ã—ã¦ãã ã•ã„)
     m_collisionObject->CreateBox(m_position, Quaternion::Identity, { 50.0f, 100.0f, 50.0f });
-    // UŒ‚‘¤‚ª’T‚¹‚é‚æ‚¤‚É–¼‘O‚ğ•t‚¯‚é
+    // æ”»æ’ƒå´ãŒæ¢ã›ã‚‹ã‚ˆã†ã«åå‰ã‚’ä»˜ã‘ã‚‹
     m_collisionObject->SetName("enemy");
-    // ©“®Á–Å‚µ‚È‚¢‚æ‚¤‚Éİ’è
+    // è‡ªå‹•æ¶ˆæ»…ã—ãªã„ã‚ˆã†ã«è¨­å®š
     m_collisionObject->SetIsEnableAutoDelete(false);
 
-    // ƒvƒŒƒCƒ„[‚ğ’T‚µ‚Ä‚¨‚­
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æ¢ã—ã¦ãŠã
     m_player = FindGO<Player>("player");
 
     m_charaCon.Init(25.0f, 75.0f, m_position);
 
     m_enemyManager = FindGO<EnemyManager>("EnemyManager");
+
     return true;
 }
 
 void Enemy::Update() {
+
     if (!m_player) return;
     if (m_enemyManager->IsActive() == false)return;
 
+	//é–¢æ•°ã®å‘¼ã³å‡ºã—
+	ManageState();
+	AnimState();
+}
+
+void Enemy::Move()
+{
+
+}
+
+void Enemy::Rotation()
+{
+
+}
+
+// æ•µã®çŠ¶æ…‹ã‚’ç®¡ç†ã™ã‚‹é–¢æ•°
+void Enemy::ManageState()
+{
     Vector3 diff = m_player->m_position - m_position;
     diff.y = 0.0f;
     float distance = diff.Length();
 
-    // --- ‹““®‚ÆƒXƒe[ƒg‚ÌŒˆ’è ---
-	if (m_hp <= 0)
+    // --- 1. æ­»äº¡åˆ¤å®š (æœ€å„ªå…ˆ) ---
+    if (m_hp <= 0)
     {
-        m_enemyState = 3; // €–S
-        if (m_modelRender.IsPlayingAnimation() == false);
-		m_enemyManager->CountUpDeathCount();
-		DeleteGO(this);
+        m_enemyState = 3; // æ­»äº¡
+        if (m_modelRender.IsPlayingAnimation() == false) { // ã‚»ãƒŸã‚³ãƒ­ãƒ³ã‚’å‰Šé™¤ã—ã€ãƒ–ãƒ­ãƒƒã‚¯ã«ã™ã‚‹
+            m_enemyManager->CountUpDeathCount();
+            DeleteGO(this);
+            return; // å‰Šé™¤ã—ãŸã®ã§ã“ã‚Œä»¥é™ã®å‡¦ç†ã¯ã—ãªã„
+        }
     }
-
+    // --- 2. æ”»æ’ƒä¸­ã®ç¶™ç¶šåˆ¤å®š ---
+    // æ”»æ’ƒä¸­ã®å ´åˆã¯ã€ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã‚‹ã¾ã§ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å›ºå®šã™ã‚‹
+    else if (m_enemyState == 2)
+    {
+        // æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãŒçµ‚ã‚ã£ãŸã‹ãƒã‚§ãƒƒã‚¯
+        if (m_modelRender.IsPlayingAnimation() == false) {
+            m_enemyState = 0;         // å¾…æ©Ÿã«æˆ»ã‚‹
+            m_hasDealtDamage = false; // ãƒ•ãƒ©ã‚°ã‚’ãƒªã‚»ãƒƒãƒˆ
+        }
+        else {
+            // ã‚¢ãƒ‹ãƒ¡ãŒç¶šã„ã¦ã„ã‚‹ãªã‚‰æ”»æ’ƒé–¢æ•°ã‚’å‘¼ã¶
+            Attack();
+        }
+    }
+    // --- 3. é€šå¸¸ã®ã‚¹ãƒ†ãƒ¼ãƒˆé·ç§» (å¾…æ©Ÿãƒ»æ­©ããƒ»æ”»æ’ƒé–‹å§‹) ---
     else if (distance < 150.0f) {
-        // 1. Š‹ß‹——£‚È‚çUŒ‚
-        m_enemyState = 2;
+        m_enemyState = 2;         // æ”»æ’ƒé–‹å§‹
+        m_hasDealtDamage = false; // é–‹å§‹æ™‚ã«ãƒªã‚»ãƒƒãƒˆ
     }
     else if (distance < 1000.0f) {
-        // 2. ‚ ‚é’ö“x‹ß‚¯‚ê‚Î’Ç‚¢‚©‚¯‚éi•à‚«j
-        m_enemyState = 1;
+        m_enemyState = 1;         // è¿½ã„ã‹ã‘ã‚‹
 
         diff.Normalize();
         Vector3 moveSpeed = diff * 150.0f;
         m_position = m_charaCon.Execute(moveSpeed, 1.0f / 60.0f);
 
-        Quaternion rot;
-        rot.SetRotationYFromDirectionXZ(diff);
-        m_modelRender.SetRotation(rot);
+        m_rot.SetRotationYFromDirectionXZ(diff);
+        m_modelRender.SetRotation(m_rot);
     }
     else {
-        // 3. ‰“‚¯‚ê‚Î‘Ò‹@
-        m_enemyState = 0;
+        m_enemyState = 0;         // é ã‘ã‚Œã°å¾…æ©Ÿ
+		m_attackTimer = 0.0f; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒé ã–ã‹ã£ãŸã‚‰æ”»æ’ƒã‚¿ã‚¤ãƒãƒ¼ã‚’ãƒªã‚»ãƒƒãƒˆ
+		Wander();// å¾˜å¾Šå‡¦ç†ã‚’å‘¼ã¶
     }
 
-    // UŒ‚’†‚©‚ÂAƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚Ä‚¢‚½‚ç‘Ò‹@‚É–ß‚é
-    if (m_enemyState == 2 && m_modelRender.IsPlayingAnimation() == false) {
-        m_enemyState = 0;
-    }
-
-    // --- ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶ ---
-    switch (m_enemyState) {
-    case 0: m_modelRender.PlayAnimation(m_enAnimClip_Idle); break;
-    case 1: m_modelRender.PlayAnimation(m_enAnimClip_Walk); break;
-    case 2: m_modelRender.PlayAnimation(m_enAnimClip_Attack); break;
-	case 3: m_modelRender.PlayAnimation(m_enAnimClip_Death); break;
-    }
-    // 3. ƒRƒŠƒWƒ‡ƒ“‚ÌˆÊ’u‚ğƒ‚ƒfƒ‹‚É‡‚í‚¹‚é
+    // --- 4. å…±é€šã®æ›´æ–°å‡¦ç† ---
     Vector3 colPos = m_position;
-    colPos.y += 50.0f; // ˜‚Ì‚‚³‚­‚ç‚¢‚É’²®
+    colPos.y += 50.0f;
     m_collisionObject->SetPosition(colPos);
     m_modelRender.SetPosition(m_position);
     m_modelRender.Update();
 }
 
-void Enemy::Render(RenderContext& rc) {
-    m_modelRender.Draw(rc);
+// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿ
+void Enemy::AnimState()
+{
+    switch (m_enemyState) {
+    case 0: m_modelRender.PlayAnimation(m_enAnimClip_Idle); 
+        break;
+    case 1: m_modelRender.PlayAnimation(m_enAnimClip_Walk); 
+        break;
+    case 2: m_modelRender.PlayAnimation(m_enAnimClip_Attack); 
+        break;
+    case 3: m_modelRender.PlayAnimation(m_enAnimClip_Death); 
+        break;
+    }
 }
 
+// æ•µã®å¾˜å¾Šã‚’ç®¡ç†ã™ã‚‹é–¢æ•°
+void Enemy::Wander()
+{
+    
+}
+
+// æ”»æ’ƒåˆ¤å®šç”¨é–¢æ•°
+void Enemy::Attack()
+{
+	//æ—¢ã«æ”»æ’ƒãŒå½“ãŸã£ã¦ã„ã‚‹å ´åˆã¯ç„¡è¦–
+	if (m_hasDealtDamage) return;
+
+	//æ”»æ’ƒåˆ¤å®šç”¨ã®ã‚¿ã‚¤ãƒãƒ¼æ›´æ–°
+	m_attackTimer += g_gameTime->GetFrameDeltaTime();
+
+    //ã‚¿ã‚¤ãƒãƒ¼ãŒä¸€ç§’çµŒéã—ãŸã‚‰
+    if (m_attackTimer >= 1.0f) {
+        //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã®è·é›¢ã‚’è¨ˆç®—
+        Vector3 diff = m_player->m_position - m_position;
+        diff.y = 0.0f; // æ°´å¹³æ–¹å‘ã®è·é›¢ã ã‘ã‚’è€ƒæ…®
+        float distance = diff.Length();
+
+        // æ”»æ’ƒåˆ¤å®šè·é›¢ï¼ˆ150.0fã€œ170.0fãã‚‰ã„ã§èª¿æ•´ï¼‰
+        if (distance < 160.0f) {
+            m_player->OnDamege(10); // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆã‚‹
+            m_hasDealtDamage = true; // ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆãŸã®ã§ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
+        }
+
+        m_attackTimer = 0.0f; // ã‚¿ã‚¤ãƒãƒ¼ã‚’ãƒªã‚»ãƒƒãƒˆ
+    }
+
+}
+
+// ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ã‚‹é–¢æ•°
 void Enemy::OnDamage(int damage)
 {
-	if (m_hp <= 0) return; // ‚·‚Å‚É€‚ñ‚Å‚¢‚éê‡‚Í–³‹
+	if (m_hp <= 0) return; // ã™ã§ã«æ­»ã‚“ã§ã„ã‚‹å ´åˆã¯ç„¡è¦–
 	m_hp -= damage;
+}
+
+void Enemy::Render(RenderContext& rc) {
+    m_modelRender.Draw(rc);
 }
