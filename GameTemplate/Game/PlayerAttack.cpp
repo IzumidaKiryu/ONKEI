@@ -92,6 +92,9 @@ void PlayerAttack::Update()
 				// ダメージを与える
 				enemy->OnDamage(m_player->m_playerATK);
 
+				//スキルゲージを10増やす
+				m_player->m_playerSkillGauge += 10;
+
 				// 御札を消す
 				m_effectEmitter->Stop();
 				DeleteGO(this);

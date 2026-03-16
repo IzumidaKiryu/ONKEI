@@ -43,7 +43,8 @@ public:
 	int m_playerHP = 300;
 	int m_maxHP = m_playerHP;
 	int m_playerATK = 10;
-
+	int m_playerSkillATK = 20;//プレイヤーのスキルダメージ
+	int m_playerSkillGauge = 0;//プレイヤーのスキルゲージ
 
 	bool m_ballView = false;
 
@@ -52,13 +53,13 @@ public:
 	CollisionObject* m_collisionObject = nullptr;
 	PlayerAttack* m_plAtk = nullptr;
 
-public:
 	// プレイヤーの位置を取得する。PlayerAttack などから呼ばれている GetPosition と整合させるために追加。
 	// 既存のメンバ変数名に合わせて内部参照を調整してください。
 	const Vector3& GetPosition() const
 	{
 		return m_position;
 	}
+
 private:
 	InGameNomalState* m_parentState = nullptr;
 };

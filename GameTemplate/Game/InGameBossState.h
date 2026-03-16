@@ -18,5 +18,5 @@ private:
     Player* m_player;
     PhysicsStaticObject m_physicsStaticObject;
     Game* m_game;
-    GameCamera* m_camera;
+    GameCamera* m_camera = nullptr;
 };

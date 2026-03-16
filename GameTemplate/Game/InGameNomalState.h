@@ -36,6 +36,6 @@ private:
 
 	bool m_isGameOver = false; // ゲームオーバーフラグ
 	bool m_isGameClear = false; // ゲームクリアフラグ
-	bool m_isSPButtonIsReady = true; // SPボタンが押セル状態かどうかのフラグ（trueの時は押せる）。
+	bool m_isSPButtonIsReady = false; // SPボタンが押セル状態かどうかのフラグ（trueの時は押せる）。
 	bool m_isChangeIsReady = false; // ステート遷移が発動したかどうかのフラグ（trueの時は遷移が発動している）。遷移が発動している間はUpdate内で遷移処理を行わないようにするためのフラグ。
 };
