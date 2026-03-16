@@ -20,7 +20,7 @@ bool Enemy::Start() {
     m_animationClips[m_enAnimClip_Death].SetLoopFlag(false); 
     m_modelRender.Init("Assets/KariModel/Skeleton/Skeleton.tkm", m_animationClips, m_enAnimClip_Num); // 敵のモデル
 	m_modelRender.SetScale({ 15.0f, 15.0f, 15.0f });
-    m_position = { 500.0f, 0.0f, 500.0f }; // 初期位置
+
 
     // 2. 当たり判定用コリジョンの作成
     m_collisionObject = NewGO<CollisionObject>(0);
@@ -58,6 +58,7 @@ void Enemy::Move()
 
 void Enemy::Rotation()
 {
+    
 
 }
 
@@ -106,11 +107,20 @@ void Enemy::ManageState()
 
         m_rot.SetRotationYFromDirectionXZ(diff);
         m_modelRender.SetRotation(m_rot);
+		m_wanderPosSet = false; // プレイヤーを追いかけている間は徘徊地点をリセット
     }
     else {
-        m_enemyState = 0;         // 遠ければ待機
+        //m_enemyState = 0;         // 遠ければ待機
 		m_attackTimer = 0.0f; // プレイヤーが遠ざかったら攻撃タイマーをリセット
-		Wander();// 徘徊処理を呼ぶ
+
+        if (m_wanderPosSet == false) {
+            //地点の設定
+            m_wanderPos = m_position;
+            m_wanderPosSet = true;
+        }
+
+        Wander();// 徘徊処理を呼ぶ
+		
     }
 
     // --- 4. 共通の更新処理 ---
@@ -139,7 +149,34 @@ void Enemy::AnimState()
 // 敵の徘徊を管理する関数
 void Enemy::Wander()
 {
-    
+
+    if (!m_wanderPosSet) return; // 安全策
+
+    m_enemyState = 1; // Walkアニメーション
+    Vector3 moveSpeed = Vector3::Zero;
+
+    // 向きに合わせて移動方向（速度）を決める
+    if (m_enemymukiState == 0) {
+        moveSpeed.z = 100.0f; // 前進
+        m_rot.SetRotationDegY(0.0f);
+    }
+    else {
+        moveSpeed.z = -100.0f; // 後退
+        m_rot.SetRotationDegY(180.0f);
+    }
+
+    // 基準点から一定距離（500.0f）離れたら反転
+    if (m_position.z >= m_wanderPos.z + 500.0f) {
+        m_enemymukiState = 1;
+    }
+    else if (m_position.z <= m_wanderPos.z - 500.0f) {
+        m_enemymukiState = 0;
+    }
+
+    // CharacterController を使って移動を適用（めり込み防止）
+    m_position = m_charaCon.Execute(moveSpeed, g_gameTime->GetFrameDeltaTime());
+
+    m_modelRender.SetRotation(m_rot);
 }
 
 // 攻撃判定用関数

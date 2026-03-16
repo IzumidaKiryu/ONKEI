@@ -23,8 +23,9 @@ public:
 		m_enAnimClip_Death,  // 死亡
 		m_enAnimClip_Num,
 	};
-
-	Vector3 m_position = Vector3::Zero;// 敵の座標
+	Vector3 m_firstPos;// 敵の初期座標
+	Vector3 m_position ;// 敵の座標
+	Vector3 m_wanderPos;//敵の徘徊時の地点
 	Quaternion m_rot = Quaternion::Identity;// 敵の回転
 
 	int m_hpMax = 10;// 敵の最大HP
@@ -40,7 +41,8 @@ private:
 
     int m_enemyState = EnAnimationClip::m_enAnimClip_Idle; // 0:待機, 1:移動, 2:攻撃
 	float m_attackTimer = 0.0f; //攻撃判定用のタイマー
-
+	int m_enemymukiState = 0;// 敵の向きの状態を管理する変数。0:プレイヤーの正面, 1:プレイヤーの背面
 	bool m_hasDealtDamage = false;// 攻撃が当たったかどうかを管理するフラグ
+	bool m_wanderPosSet = false;// 徘徊地点が設定されているかどうかを管理するフラグ
 	
 };
