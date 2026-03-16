@@ -49,6 +49,20 @@ private:
     bool m_isClear = false;
     std::vector<SongData> m_songList;//楽曲データを保持。
 
+    SpriteRender m_cutInSprite;   // キャラクター
+    SpriteRender m_cutInBg;       // 背景の帯
+    Vector3 m_charaPos;     // キャラの座標
+    Vector3 m_bgPos;        // 背景の座標
+    float m_cutInAlpha = 0.0f; // 共通の透明度
 
+    SpriteRender m_staffSprite;   // 五線譜（判定ライン込）のスプライト
+    Vector3 m_staffPos;
+    Vector3 m_staffScale;
+    float m_staffAlpha = 0.0f;
+    float m_staffRotation = 0.0f; // ★追加：回転角（度数法）
+
+    SpriteRender m_screen_Graw;
+	// 画面全体のグローエフェクト用スプライト
+	float m_grawAlpha = 0.0f; // グローエフェクトの透明度
 };
 

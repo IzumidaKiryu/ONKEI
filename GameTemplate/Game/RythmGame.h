@@ -102,6 +102,11 @@ public:
 private:
 	std::string m_songName;
 	bool m_wasLeftKeyHeld = false; // 前フレームの入力状態
+public:
+	void GamePlay();
+private:
+	bool m_isStarted = false; // ゲームが開始されたかどうか(カットイン等の演出が終わったか)
+
 };
 
 

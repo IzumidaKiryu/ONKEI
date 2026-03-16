@@ -159,12 +159,13 @@ void RythmGame::Init(std::string songName) {
 		m_notes.push_back(note);
 	}
 
-	m_gameMusic->Play(false);
-	m_musicStartTime = 0.0f;
+	
 }
 
 // --- Update 関数
 void RythmGame::Update() {
+	if (!m_isStarted) return; // ゲーム開始前は更新しない
+
 	// 1. サウンドソースの存在チェック（以前の修正を維持）
 	auto* sound = FindGO<SoundSource>("gameMusic");
 	if (sound == nullptr || m_gameMusic == nullptr) {
@@ -273,8 +274,17 @@ void RythmGame::PlaySE()
 	se->Play(false);
 }
 
+void RythmGame::GamePlay()
+{
+	m_gameMusic->Play(false);
+	m_musicStartTime = 0.0f;
+	m_isStarted = true;
+}
+
 // --- Render: 描画処理 (復活・横流れ対応) ---
 void RythmGame::Render(RenderContext& rc) {
+	if (!m_isStarted) return; // ゲーム開始前は更新しない
+
 	m_backSprite.Draw(rc);
 
 	// 判定円の描画

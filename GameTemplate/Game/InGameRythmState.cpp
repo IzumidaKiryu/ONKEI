@@ -50,8 +50,28 @@ void InGameRythmState::Initialize(Game* game)
 
         // 4. 選ばれた曲を渡して初期化
         m_rythmGame = NewGO<RythmGame>(0, "RythmGame");
-        m_rythmGame->Init(m_songList[2].jsonPath.c_str()); // ここでランダムな1曲を渡す
+        m_rythmGame->Init(m_songList[randomIndex].jsonPath.c_str()); // ここでランダムな1曲を渡す
     }
+
+    // カットイン画像の読み込み（サイズは適宜調整してください）
+    m_cutInSprite.Init("Assets/sprite/Sian.DDS", 1000.0f, 720.0f);
+    m_cutInBg.Init("Assets/sprite/CutInBg.DDS", 1920.0f, 1080.0f);      
+    // --- 初期位置の設定 ---
+    // キャラクター：画面の左端外 (X = -1200.0f くらい)
+    m_charaPos = { -1200.0f, 0.0f, 0.0f };
+    // 背景：画面の右端外 (X = 1200.0f くらい)
+    m_bgPos = { 1200.0f, 0.0f, 0.0f };
+
+    m_cutInAlpha = 0.0f;
+
+	// 五線譜の初期化
+    m_staffSprite.Init("Assets/sprite/SPSprite.DDS", 1920.0f, 1080.0f);//変える
+    m_staffPos = { 960.0f, 540.0f, 0.0f }; // 画面中央
+    m_staffScale = { 0.1f, 0.1f, 1.0f }; // 最初は小さく
+	m_staffAlpha = 0.0f; // 最初は透明
+
+    m_screen_Graw.Init("Assets/sprite/Screen_Graw.DDS", 1920.0f, 1080.0f,AlphaBlendMode_Add);
+    m_screen_Graw.SetPosition({ 0, 0, 0 });         // 画面中央に置く（全体を覆う）
 
 }
 
@@ -106,7 +126,67 @@ void InGameRythmState::Render(RenderContext& rc)
 
 void InGameRythmState::UpdateCutIn()
 {
-    if (m_timer > 1.5f) // カットイン1.5秒
+    float deltaTime = g_gameTime->GetFrameDeltaTime();
+
+    if (m_timer < 0.8f) {
+        // --- 登場フェーズ（最初の0.8秒） ---
+        // キャラクターを右へ移動
+        m_charaPos.x += 2500.0f * deltaTime;
+        if (m_charaPos.x > 0.0f) m_charaPos.x = 0.0f; // 中央で止める
+
+        // 背景を左へ移動
+        m_bgPos.x -= 2500.0f * deltaTime;
+        if (m_bgPos.x < 0.0f) m_bgPos.x = 0.0f; // 中央で止める
+
+        // フェードイン
+        m_cutInAlpha += 2.0f * deltaTime;
+    }
+    else if (m_timer < 2.2f) {
+        // --- 溜めフェーズ（0.8~2.2秒） ---
+        // 中央付近でそれぞれ超ゆっくり動かす（お好みで）
+        m_charaPos.x += 10.0f * deltaTime;
+        m_bgPos.x -= 10.0f * deltaTime;
+    }
+    else {
+        // --- 退場フェーズ（最後の0.8秒） ---
+        // キャラクターをさらに右へ加速
+        m_charaPos.x += 3000.0f * deltaTime;
+        // 背景をさらに左へ加速
+        m_bgPos.x -= 3000.0f * deltaTime;
+
+        // フェードアウト
+        m_cutInAlpha -= 2.0f * deltaTime;
+    }
+
+    // 透明度の制限
+    if (m_cutInAlpha > 1.0f) m_cutInAlpha = 1.0f;
+    if (m_cutInAlpha < 0.0f) m_cutInAlpha = 0.0f;
+
+    // スプライトに反映
+    m_cutInSprite.SetPosition(m_charaPos);
+    m_cutInBg.SetPosition(m_bgPos);
+
+    // エンジンの機能に応じて透明度を設定してください
+     m_cutInSprite.SetMulColor({1, 1, 1, m_cutInAlpha});
+     m_cutInBg.SetMulColor({1, 1, 1, m_cutInAlpha});
+
+    m_cutInSprite.Update();
+    m_cutInBg.Update();
+    // --- モヤ(m_screen_Graw)の激しい明滅処理 ---
+
+    // 0.0 ～ 1.0 のランダムな値を作る
+    float randomFlicker = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+    // アルファ値だけでなく、RGBの倍率として randomFlicker を使う
+    // 0.3 ～ 1.0 の間で色が強烈に変化します
+    float power = (0.3f + randomFlicker * 0.7f) * m_cutInAlpha;
+
+    // 全ての成分に power を掛ける
+    m_screen_Graw.SetMulColor({ 0.2f * power, 0.6f * power, 1.0f * power, m_cutInAlpha });
+    m_screen_Graw.Update();
+
+    // 次のフェーズへ
+    if (m_timer > 3.0f)
     {
         m_phase = RythmPhase::StaffZoom;
         m_timer = 0.0f;
@@ -115,10 +195,42 @@ void InGameRythmState::UpdateCutIn()
 
 void InGameRythmState::UpdateStaffZoom()
 {
-    if (m_timer > 0.8f) // 五線譜拡大0.8秒
+
+    //また今度やろう、ちょっと変
+    float deltaTime = g_gameTime->GetFrameDeltaTime();
+
+    // 0.0 ～ 0.8 の時間を 0.0 ～ 1.0 の割合（t）に変換
+    float t = m_timer / 0.8f;
+    if (t > 1.0f) t = 1.0f;
+
+    // --- イージング処理 (Ease Out Expo的な動き) ---
+    // tが1に近づくほど、増え方がゆっくりになる
+    float easeOut = 1.0f - pow(2.0f, -10.0f * t);
+
+    // スケール：0.1 から 1.0 へ
+    float currentScale = 0.1f + (0.9f * easeOut);
+    m_staffScale = { currentScale, currentScale, 1.0f };
+
+    // 透明度：0.0 から 1.0 へ
+    m_staffAlpha = easeOut;
+
+    // 座標：奥（中心）から、本来の表示位置（例：Y=0）へ
+    // 遠近感を出すために、少し上から降りてくるようにするとGOOD
+    m_staffPos.x = 0.0f;
+    m_staffPos.y = 200.0f * (1.0f - easeOut); // 200から0へ降りてくる
+    m_staffPos.z = 0.0f;
+
+    // スプライトに反映
+    m_staffSprite.SetPosition(m_staffPos);
+    m_staffSprite.SetScale(m_staffScale);
+    m_staffSprite.SetMulColor({1, 1, 1, m_staffAlpha});
+    m_staffSprite.Update();
+
+    if (m_timer > 0.8f)
     {
         m_phase = RythmPhase::Gameplay;
         m_timer = 0.0f;
+        if (m_rythmGame) m_rythmGame->GamePlay(); // ここで音楽ドン！
     }
 }
 
@@ -139,11 +251,18 @@ void InGameRythmState::FinishRythm()
 void InGameRythmState::DrawCutIn(RenderContext& rc)
 {
     // カットインスプライト描画
+    // 先に背景（帯）を描画
+    m_cutInBg.Draw(rc);
+    // その上にキャラクターを描画
+    m_cutInSprite.Draw(rc);
+    m_screen_Graw.Draw(rc); // ここに入れると背景が光る
+
 }
 
 void InGameRythmState::DrawStaffZoom(RenderContext& rc)
 {
     // 五線譜拡大アニメ描画
+    m_staffSprite.Draw(rc);
 }
 
 void InGameRythmState::DrawGameplay(RenderContext& rc)
