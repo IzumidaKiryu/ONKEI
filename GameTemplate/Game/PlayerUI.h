@@ -2,7 +2,7 @@
 class Player;
 class PlayerUI : public IGameObject
 {
-	public:
+public:
 	PlayerUI();
 	~PlayerUI();
 	bool Start() override;
