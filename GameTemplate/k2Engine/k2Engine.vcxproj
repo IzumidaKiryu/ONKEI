@@ -69,6 +69,7 @@
     <ClCompile Include="level3DRender\MapChipRender.cpp" />
     <ClCompile Include="LoadingCircle.cpp" />
     <ClCompile Include="nature\SkyCube.cpp" />
+    <ClCompile Include="UIGaugeArc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera\CameraCollisionSolver.h" />
@@ -111,6 +112,7 @@
     <ClInclude Include="level3DRender\MapChipRender.h" />
     <ClInclude Include="LoadingCircle.h" />
     <ClInclude Include="nature\SkyCube.h" />
+    <ClInclude Include="UIGaugeArc.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
