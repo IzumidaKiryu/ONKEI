@@ -41,6 +41,7 @@
       <Filter>RythmGame</Filter>
     </ClCompile>
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="SkillButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -78,5 +79,6 @@
       <Filter>RythmGame</Filter>
     </ClInclude>
     <ClInclude Include="Stage.h" />
+    <ClInclude Include="SkillButton.h" />
   </ItemGroup>
 </Project>

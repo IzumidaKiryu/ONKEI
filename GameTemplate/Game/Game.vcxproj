@@ -241,6 +241,7 @@
     <ClCompile Include="ReadJSON.cpp" />
     <ClCompile Include="ResultState.cpp" />
     <ClCompile Include="RythmGame.cpp" />
+    <ClCompile Include="SkillButton.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -270,6 +271,7 @@
     <ClInclude Include="ReadJSON.h" />
     <ClInclude Include="ResultState.h" />
     <ClInclude Include="RythmGame.h" />
+    <ClInclude Include="SkillButton.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="stdafx.h" />

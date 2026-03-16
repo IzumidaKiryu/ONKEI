@@ -142,6 +142,7 @@
     </ClCompile>
     <ClCompile Include="LoadingCircle.cpp" />
     <ClCompile Include="DiamondWipe.cpp" />
+    <ClCompile Include="UIGaugeArc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graphics\ModelRender.h">
@@ -256,5 +257,6 @@
     </ClInclude>
     <ClInclude Include="LoadingCircle.h" />
     <ClInclude Include="DiamondWipe.h" />
+    <ClInclude Include="UIGaugeArc.h" />
   </ItemGroup>
 </Project>
