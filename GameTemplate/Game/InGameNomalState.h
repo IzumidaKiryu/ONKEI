@@ -8,6 +8,7 @@ class GameCamera;
 class EnemyManager;
 class PlayerUI;
 class Stage;
+class SkillButton;
 class InGameNomalState : public IGameState {
 public:
 	~InGameNomalState();
@@ -30,6 +31,7 @@ private:
 	GameCamera* m_camera;
 	EnemyManager* m_enemyManager;
 	Stage* stage;
+	SkillButton* m_skillButton;
 
 	float m_currentSP = 0.0f; // 現在の信仰値
 	float m_maxSP = 100.0f; // 最大信仰値

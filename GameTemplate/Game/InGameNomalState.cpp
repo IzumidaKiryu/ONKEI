@@ -9,9 +9,11 @@
 #include "InGameBossState.h"
 #include "InGameRythmState.h"
 #include "Stage.h"
+#include "SkillButton.h"
 namespace
 {
 	int CREACOUNT=11; // 軟体倒したらクリアにするか変数
+	const float SKILLGAUGEMAX = 100.0f; // スキルゲージの最大値
 }
 
 InGameNomalState::~InGameNomalState() {
@@ -19,6 +21,7 @@ InGameNomalState::~InGameNomalState() {
 	DeleteGO(m_camera);
 	DeleteGO(m_enemyManager);
 	DeleteGO(m_playerUI);
+	DeleteGO(stage);
 }
 
 void InGameNomalState::Initialize(Game* game) {
@@ -38,6 +41,9 @@ void InGameNomalState::Initialize(Game* game) {
 
 	// 自分を親としてセットする
 	stage->SetParentState(this);
+
+	m_skillButton = NewGO<SkillButton>(0, "skillButton");
+	m_skillButton->Init("Assets/UI/skill.DDS", SKILLGAUGEMAX); // アイコンとクールタイムを指定して初期化
 }
 
 void InGameNomalState::Update(Game* game) {
@@ -55,20 +61,27 @@ void InGameNomalState::Update(Game* game) {
 		m_isGameClear = false; // フラグをリセットしておく（次のプレイでゲームクリアになったときに正しく遷移するように）
 		return;
 	}
+
 	//スキルゲージが100溜まったら
-	if (m_player->m_playerSkillGauge >= 100) {
+	if (m_player->m_playerSkillGauge >= SKILLGAUGEMAX) {
 		m_isSPButtonIsReady = true; // SPボタンが押せる状態にする
-		//SPボタンが押せる状態でLB1が押されたらSPボタンを発動させる
-		if (m_isSPButtonIsReady && g_pad[0]->IsTrigger(enButtonDown)) {//ボタンは変える！
-			//SPボタンの発動処理をここに書く
-			m_game->PushState(new InGameRythmState());
-			m_isSPButtonIsReady = false; // SPボタンを使用したので、再度押せるようになるまでフラグをfalseにする
-		}
 	}
+	else {
+		m_isSPButtonIsReady = false; // SPボタンが押せない状態にする
+	}
+	//SPボタンが押せる状態でLB1が押されたらSPボタンを発動させる
+	if (m_isSPButtonIsReady && g_pad[0]->IsTrigger(enButtonDown)) {//ボタンは変える！
+		//SPボタンの発動処理をここに書く
+		m_skillButton->UseSkill();//まず、スキルボタンクラス側の発動関数を呼ぶ。
+		m_player->m_playerSkillGauge = 0;//プレイヤー側のスキルゲージを0にする
+		m_game->PushState(new InGameRythmState());//リズムゲームのステートをPushする。これでリズムゲームのステートが表に出る。
+	}
+	
+	m_skillButton->Update((float)m_player->m_playerSkillGauge);//スキルボタンにはプレイヤーのスキルゲージを渡す。
 }
 
 void InGameNomalState::Render(RenderContext& rc) {
-
+	m_skillButton->Draw(rc);
 }
 
 void InGameNomalState::OnPause()

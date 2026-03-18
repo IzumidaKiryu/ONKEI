@@ -18,9 +18,13 @@ bool PlayerUI::Start()
     m_hpBarBack.SetPivot({ 0.0f, 0.5f }); // 左端を起点にする
 
     // --- 2. 前景バー（現在のHP）の初期化 ---
-    m_hpBarFront.Init("Assets/sprite/white.DDS", m_hpBarWidth, m_hpBarHeight);
+    m_hpBarFront.Init("Assets/UI/bar.DDS", m_hpBarWidth, m_hpBarHeight);
     m_hpBarFront.SetMulColor({ 0.0f, 1.0f, 0.0f, 1.0f }); // 緑色
     m_hpBarFront.SetPivot({ 0.0f, 0.5f }); // 左端を起点にする
+
+	m_AttackGauge = new nsK2Engine::UIGaugeArc();
+	m_AttackGauge->Init("Assets/UI/action.DDS", 800, 400, "Assets/shader/SkillGauge.fx");
+    m_AttackGauge->SetPosition(Vector3(500.0f, -100.0f, 0.0f));
 
     // プレイヤーの参照を取得
     m_player = FindGO<Player>("player");
@@ -50,6 +54,8 @@ void PlayerUI::Update()
 
     m_hpBarBack.Update();
     m_hpBarFront.Update();
+
+	m_AttackGauge->Update(m_attackGaugeRate, 0.0f, 0.0f, 3.14f, 0.0f, 0.5f);
 }
 
 void PlayerUI::Render(RenderContext& rc)
@@ -57,4 +63,5 @@ void PlayerUI::Render(RenderContext& rc)
     // 背景 -> 前景の順に描画
     m_hpBarBack.Draw(rc);
     m_hpBarFront.Draw(rc);
+	m_AttackGauge->Draw(rc);
 }
