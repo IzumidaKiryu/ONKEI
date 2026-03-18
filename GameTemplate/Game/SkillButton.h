@@ -9,7 +9,7 @@ public:
 
     // skillIconPath: ボタンの中身の画像, coolTime: スキルが溜まる秒数
     void Init(const char* skillIconPath, float coolTime);
-    void Update() override;
+    void Update(float nowGauge);
     void Draw(RenderContext& rc);
 
     // スキルを使用する（リキャスト開始）
@@ -25,10 +25,10 @@ private:
     nsK2Engine::UIGaugeArc* m_gauge = nullptr; // さっき作った全円シェーダーを適用する板
     SpriteRender m_baseIcon;                      // 下地の暗いアイコン
 
-    float m_timer = 0.0f;        // 現在の経過時間
+	float m_nowSkillGauge = 0.0f;        // 現在のスキルゲージの値
     float m_maxCoolTime = 5.0f;  // リキャスト秒数
-    float m_hpRate = 1.0f;       // 0.0 ～ 1.0
-    bool m_isCoolingDown = false;
+    float m_hpRate = 0.0f;       // 0.0 ～ 1.0
+    bool m_isCoolingDown = true;
 
-    Vector3 m_position = Vector3::Zero;
+    Vector3 m_position = Vector3(350.0f,-50.0f,0.0f);
 };

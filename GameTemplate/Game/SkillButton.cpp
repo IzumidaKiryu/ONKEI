@@ -3,54 +3,45 @@
 void SkillButton::Init(const char* skillIconPath, float coolTime)
 {
     m_maxCoolTime = coolTime;
-
-    // 1. 下地のアイコン（常に表示される暗いボタン）
-    m_baseIcon.Init(skillIconPath, 200.0f, 200.0f);
-    m_baseIcon.SetMulColor({ 0.2f, 0.2f, 0.2f, 1.0f }); // 暗くしておく
-
-    // 2. メインのゲージ（時計回りに増える明るいボタン）
+   
+    // ゲージ（シェーダーで「暗い部分」と「明るい部分」を塗り分ける）
     m_gauge = new nsK2Engine::UIGaugeArc();
-    // ここでさっき作った全円シェーダーを指定！
-    m_gauge->Init(skillIconPath, 200.0f, 200.0f, "Assets/shader/SkillGauge.fx");
+    m_gauge->Init(skillIconPath, 600.0f, 300.0f, "Assets/shader/SkillGauge.fx");
     m_gauge->SetPivot({ 0.5f, 0.5f }); // 中心基準
 }
 
-void SkillButton::Update()
+void SkillButton::Update(float nowGauge)
 {
     if (m_isCoolingDown) {
-        m_timer += g_gameTime->GetFrameDeltaTime();
-        m_hpRate = m_timer / m_maxCoolTime;
+        m_nowSkillGauge = nowGauge;
+        m_hpRate = m_nowSkillGauge / m_maxCoolTime;
 
         if (m_hpRate >= 1.0f) {
             m_hpRate = 1.0f;
             m_isCoolingDown = false;
-            // ★ここで「ピキーン！」と光る演出を入れると最高
+            // ここで「ピキーン！」と光る演出（オーラなど）を出すならフラグを立てる
         }
     }
 
-    // シェーダーに現在の割合を渡す
-    // inner=0.0, outer=0.5 で「円全体」になる
-    m_gauge->Update(m_hpRate, 0.0f, -3.14f, 3.14f, 0.0f, 0.5f);
-
-    m_baseIcon.SetPosition(m_position);
+    // 座標の更新
     m_gauge->SetPosition(m_position);
 
-    m_baseIcon.Update();
-    // m_gaugeのUpdateは内部のSpriteを更新する
+    // シェーダーに現在の割合を渡す
+    // outer=0.5で円の端まで。inner=0.0で塗りつぶし
+    m_gauge->Update(m_hpRate, 0.0f, 0.0f, 3.14f, 0.0f, 0.5f);
 }
 
 void SkillButton::Draw(RenderContext& rc)
 {
-    m_baseIcon.Draw(rc); // 下地を描画
     if (m_gauge) {
-        m_gauge->Draw(rc); // ゲージ（明るいアイコン）を描画
+        m_gauge->Draw(rc);
     }
 }
 
 void SkillButton::UseSkill()
 {
     if (!m_isCoolingDown) {
-        m_timer = 0.0f;
+        m_nowSkillGauge = 0.0f;
         m_hpRate = 0.0f;
         m_isCoolingDown = true;
     }

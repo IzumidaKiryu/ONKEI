@@ -12,7 +12,7 @@ cbuffer HPGaugeCB : register(b1)
     float maxAngle; // C++から渡される終了角 (0.0)
     float innerRadius; // 内径
     float outerRadius; // 外径
-    float damageFlash; // 光らせる演出用
+    float damageFlash; // 光らせる演出用//
     float2 centerPos; // パディング込み
 };
 
@@ -51,31 +51,39 @@ float4 PSMain(PSInput input) : SV_Target
     float dist = length(d);
 
     // 2. 角度計算（12時方向から時計回り）
-    // atan2(-d.x, d.y) とすると上が0度になります
     float angle = atan2(-d.x, d.y);
-    
-    // -PI ～ PI の結果を 0.0 ～ 1.0 に変換
     float normalizedAngle = (angle + 3.14159265f) / 6.28318530f;
 
-    // 3. バウンティ風：溜まっていない場所を暗くする
-    // hpRateは「スキルの溜まり具合(0.0~1.0)」
-    if (normalizedAngle > hpRate)
+    // 3. バウンティ再現ロジック
+    if (hpRate >= 1.0f)
     {
-        texColor.rgb *= 0.3f; // 暗いグレーにする（ボタンの形は見せる）
-        // もし完全に消したいなら discard;
+        // 100%溜まったら本来の色で表示
+        texColor.rgb *= 1.0f;
     }
     else
     {
-        // 溜まっている部分はそのまま or 少し明るくして強調
-        texColor.rgb += 0.1f;
+        // チャージ中の判定
+        if (normalizedAngle > hpRate)
+        {
+            // まだ溜まっていない場所は「真っ暗」
+            texColor.rgb *= 0.2f;
+        }
+        else
+        {
+            // 溜まってきている場所は「少し明るい青」などを乗算するとそれっぽくなります
+            texColor.rgb *= float3(0.4f, 0.6f, 1.0f);
+        }
     }
 
-    // 4. 円形に切り抜く（ボタンの外側と内側を消す）
-    // innerRadius=0.0（塗りつぶし円） ～ 0.45（枠だけ） など調整可能
+    // 4. 円形に切り抜く
     if (dist > outerRadius || dist < innerRadius)
     {
         discard;
     }
+
+    // アルファ値が0の場所（画像の透明部分）は捨てる
+    if (texColor.a <= 0.0f)
+        discard;
 
     return texColor;
 }
