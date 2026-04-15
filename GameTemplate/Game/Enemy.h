@@ -44,5 +44,10 @@ private:
 	int m_enemymukiState = 0;// 敵の向きの状態を管理する変数。0:プレイヤーの正面, 1:プレイヤーの背面
 	bool m_hasDealtDamage = false;// 攻撃が当たったかどうかを管理するフラグ
 	bool m_wanderPosSet = false;// 徘徊地点が設定されているかどうかを管理するフラグ
-	
+	// HPバー用のメンバを追加
+	SpriteRender m_hpBarSprite;      // HPの緑色部分
+	SpriteRender m_hpBarBackSprite;  // HPの背景（赤や黒）
+
+	// HPバーを更新する内部関数
+	void UpdateHPBar();
 };

@@ -38,6 +38,17 @@ bool Enemy::Start() {
 
     m_enemyManager = FindGO<EnemyManager>("EnemyManager");
 
+
+    // --- HPバーの初期化 ---
+    // 背景（Assets/Image/hp_back.dds などを用意してください）
+    m_hpBarBackSprite.Init("Assets/sprite/white.DDS", 60.0f, 7.0f);
+    // バー本体（Assets/Image/hp_bar.dds など）
+    m_hpBarSprite.Init("Assets/sprite/Select.DDS", 60.0f, 7.0f);
+
+    // 重要：ピボットを左端に設定（HPが減った時に左に縮むようにするため）
+    m_hpBarSprite.SetPivot({ 0.0f, 0.5f });
+    m_hpBarBackSprite.SetPivot({ 0.0f,0.5f });
+
     return true;
 }
 
@@ -49,6 +60,8 @@ void Enemy::Update() {
 	//関数の呼び出し
 	ManageState();
 	AnimState();
+    UpdateHPBar();
+    
 }
 
 void Enemy::Move()
@@ -74,7 +87,11 @@ void Enemy::ManageState()
     {
         m_enemyState = 3; // 死亡
         if (m_modelRender.IsPlayingAnimation() == false) { // セミコロンを削除し、ブロックにする
-            m_enemyManager->CountUpDeathCount();
+            // ★重要：消える前にマネージャーの名簿から自分を消してもらう
+            if (m_enemyManager) {
+                m_enemyManager->OnEnemyDestroy(this);
+                m_enemyManager->CountUpDeathCount();
+            }
             DeleteGO(this);
             return; // 削除したのでこれ以降の処理はしない
         }
@@ -215,4 +232,36 @@ void Enemy::OnDamage(int damage)
 
 void Enemy::Render(RenderContext& rc) {
     m_modelRender.Draw(rc);
+    m_hpBarBackSprite.Draw(rc);
+	m_hpBarSprite.Draw(rc);
+}
+
+void Enemy::UpdateHPBar() {
+    // --- HPバーの座標更新 ---
+
+      // 1. 3D空間の頭上の位置を決める
+    Vector3 worldPos = m_position;
+    worldPos.y += 180.0f; // 敵のモデルに合わせて調整（15倍スケールならもう少し高くてもいいかも）
+
+    // 2. カメラの関数を使ってスクリーン座標に変換
+    Vector2 screenPos2D;
+    g_camera3D->CalcScreenPositionFromWorldPosition(screenPos2D, worldPos);
+
+    // 3. スプライトはVector3を想定しているので詰め替える (Zは0)
+    Vector3 screenPos3D;
+    screenPos3D.x = screenPos2D.x;
+    screenPos3D.y = screenPos2D.y;
+    screenPos3D.z = 0.0f;
+
+    m_hpBarBackSprite.SetPosition(screenPos3D);
+    m_hpBarSprite.SetPosition(screenPos3D);
+
+    // 4. HP割合でスケール変更
+    float hpRate = (float)m_hp / (float)m_hpMax;
+    if (hpRate < 0.0f) hpRate = 0.0f;
+    m_hpBarSprite.SetScale({ hpRate, 1.0f, 1.0f });
+
+    // 5. 反映
+    m_hpBarBackSprite.Update();
+    m_hpBarSprite.Update();
 }

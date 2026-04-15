@@ -51,11 +51,13 @@ void InGameNomalState::Update(Game* game) {
 	StageClear();
 	//ゲームオーバー、ゲームクリアのフラグが立っているかを確認して、立っていたらそれぞれのステートに遷移する
 	if(m_isGameOver==true){
+		m_enemyManager->ClearAllEnemies();
 		m_game->ChangeState(new ResultState(ResultState::ResultType::enGameOver));
 		m_isGameOver = false; // フラグをリセットしておく（次のプレイでゲームオーバーになったときに正しく遷移するように）
 		return;
 	}
 	else if(m_isGameClear==true){
+		m_enemyManager->ClearAllEnemies();
 		//Boss戦のステートに遷移する予定
 		m_game->ChangeState(new InGameBossState());
 		m_isGameClear = false; // フラグをリセットしておく（次のプレイでゲームクリアになったときに正しく遷移するように）
