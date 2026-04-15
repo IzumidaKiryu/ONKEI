@@ -4,6 +4,7 @@ class PlayerAttack;
 class ItemSokudo;
 class Collision;
 class InGameNomalState;
+class InGameBossState; 
 class Player :public IGameObject
 {
 public:
@@ -21,7 +22,7 @@ public:
 	void Render(RenderContext& rc);
 	// 親をセットする関数
 	void SetParentState(InGameNomalState* parent) { m_parentState = parent; }
-
+	void SetParentState(InGameBossState* state) { m_bossState = state; } // ★追加
 	enum EnAnimationClip {
 		m_enAnimClip_Idle,
 		m_enAnimClip_Walk,
@@ -62,5 +63,6 @@ public:
 
 private:
 	InGameNomalState* m_parentState = nullptr;
+	InGameBossState* m_bossState = nullptr; // ★追加
 };
 

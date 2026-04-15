@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "EnemyManager.h"
 #include "Enemy.h"
+#include "Boss.h"
 
 void EnemyManager::Init() {
     // 1. 座標データテーブルを作成
@@ -43,6 +44,15 @@ void EnemyManager::OnEnemyDestroy(Enemy* enemy) {
     if (it != m_enemies.end()) {
         m_enemies.erase(it);
     }
+}
+
+void EnemyManager::BossSpawn()
+{
+    m_boss = NewGO<Boss>(0, "boss");
+
+    // 3. ボスの初期位置を設定（ステージの奥など）
+    Vector3 bossPos = { 0.0f, 0.0f, 0.0f };
+    m_boss->SetPosition(bossPos);
 }
 
 void EnemyManager::ClearAllEnemies() {

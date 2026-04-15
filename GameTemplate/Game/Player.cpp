@@ -6,7 +6,7 @@
 #include "collision/CollisionObject.h"
 #include "sound/SoundEngine.h"
 #include "InGameNomalState.h"
-
+#include "InGameBossState.h" // 追加：Incomplete type エラーを解消するために完全定義をインクルード
 
 Player::Player() {
 }
@@ -47,8 +47,14 @@ bool Player::Start()
 }
 
 void Player::Update() {
-	// 1. 親がいない、または親がアクティブでない（Deactivateされている）なら何もしない
-	if (!m_parentState || !m_parentState->IsActive()) {
+	// 1. ノーマルステートもボスステートもどちらもいない場合、
+	// または、いる方のステートがアクティブでないなら何もしない
+
+	bool isNormalActive = m_parentState && m_parentState->IsActive();
+	bool isBossActive = m_bossState && m_bossState->IsActive();
+
+	// どちらのステートもアクティブでないならリターン
+	if (!isNormalActive && !isBossActive) {
 		return;
 	}
 

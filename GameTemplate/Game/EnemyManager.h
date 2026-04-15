@@ -3,6 +3,7 @@
 #include "Enemy.h"
 
 class Enemy;
+class Boss;
 
 // 敵の初期配置用データ構造体
 struct EnemySpawnData {
@@ -19,6 +20,10 @@ public:
     void ClearAllEnemies(); // 全削除用関数
     // 敵が死んだときに呼び出してもらう関数
     void OnEnemyDestroy(Enemy* enemy);
+
+	void BossSpawn(); // ボスをスポーンさせる関数
+	void SetBossDeathFlag(bool isDead) { m_BossDeathFlag = isDead; }
+	bool GetBossDeathFlag() { return m_BossDeathFlag; }
 private:
     void SpawnEnemies(); // 敵を一括生成する関数
 
@@ -28,4 +33,6 @@ private:
     // 配置データをリスト化して持つ
     std::vector<EnemySpawnData> m_spawnList;
     std::vector<Enemy*> m_enemies; // 生成したエネミーを覚えておくリスト
+	bool m_BossDeathFlag = false; // ボスが死んだかどうかのフラグ
+	Boss* m_boss = nullptr; // ボスのポインタ
 };
