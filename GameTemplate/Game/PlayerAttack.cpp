@@ -4,6 +4,7 @@
 #include "collision/CollisionObject.h"
 #include "GameCamera.h"
 #include "Enemy.h"
+#include "Boss.h"
 
 namespace
 {
@@ -79,10 +80,23 @@ void PlayerAttack::Update()
 	// コリジョンも回転を合わせる（必要であれば）
 	m_collisionObj->SetRotation(m_rotation);
 
-	// --- 追加：当たり判定の処理 ---
-	// 1. "enemy" という名前のコリジョンをすべて探す
-	const auto& enemyObjects = g_collisionObjectManager->FindMatchForwardNameCollisionObjects("enemy");
+	// --- ボスへの当たり判定 ---
+	const auto& bossObjects = g_collisionObjectManager->FindMatchForwardNameCollisionObjects("boss");
+	for (auto bossCol : bossObjects) {
+		if (m_collisionObj->IsHit(bossCol)) {
+			Boss* boss = FindGO<Boss>(bossCol->GetName());
+			if (boss) {
+				boss->OnDamage(m_player->m_playerATK);
+				m_player->m_playerSkillGauge += 10;
+				m_effectEmitter->Stop();
+				DeleteGO(this);
+				return;
+			}
+		}
+	}
 
+	// --- ザコへの当たり判定 (既存のコード) ---
+	const auto& enemyObjects = g_collisionObjectManager->FindMatchForwardNameCollisionObjects("enemy");
 	for (auto enemyCol : enemyObjects) {
 		// 2. 自分のコリジョンと敵のコリジョンが接触しているか
 		if (m_collisionObj->IsHit(enemyCol)) {
@@ -102,6 +116,8 @@ void PlayerAttack::Update()
 			}
 		}
 	}
+
+	
 	// ----------------------------
 
 	// 自動削除タイマー。
