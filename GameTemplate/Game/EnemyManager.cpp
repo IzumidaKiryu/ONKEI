@@ -27,14 +27,18 @@ void EnemyManager::Init() {
 }
 
 void EnemyManager::SpawnEnemies() {
+	int count = 0;
     // ループ回数はデータの数（m_spawnList.size()）だけ回す
     for (const auto& data : m_spawnList) {
-        Enemy* enemy = NewGO<Enemy>(0); // 優先度は一括で0などでOK
+		char name[32];
+        sprintf_s(name, "enemy_%d", count);
+        Enemy* enemy = NewGO<Enemy>(0,name); // 優先度は一括で0などでOK
         enemy->m_position = data.pos;
         enemy->m_firstPos = data.pos;
 
         // リストに追加
         m_enemies.push_back(enemy);
+		count++;
     }
 }
 

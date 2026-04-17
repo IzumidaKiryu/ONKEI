@@ -5,6 +5,7 @@ class Player;
 
 class Enemy : public IGameObject {
 public:
+	~Enemy();
     bool Start() override;
     void Update() override;
 	void Move();// “G‚ÌˆÚ“®‚ğŠÇ—‚·‚éŠÖ”
