@@ -4,10 +4,18 @@
 #include "EnemyManager.h"
 
 
+//コリジョンオブジェクトを消すためにデストラクタが必要
+Enemy::~Enemy()
+{
+    if (m_collisionObject) {
+        DeleteGO(m_collisionObject);
+    }
+
+}
+
 bool Enemy::Start() {
 
-    // 1. 自分自身に名前を付ける (FindGO で見つけられるようにするため)
-    SetName("enemy");
+  
 
     // アニメーションのロード
     m_animationClips[m_enAnimClip_Idle].Load("Assets/Karimodel/SkeletonAnim/SkeletonIdle.tka");
@@ -27,7 +35,7 @@ bool Enemy::Start() {
     // ボックス形状を作成 (サイズはモデルに合わせて調整してください)
     m_collisionObject->CreateBox(m_position, Quaternion::Identity, { 50.0f, 100.0f, 50.0f });
     // 攻撃側が探せるように名前を付ける
-    m_collisionObject->SetName("enemy");
+    m_collisionObject->SetName(this->m_name.c_str());
     // 自動消滅しないように設定
     m_collisionObject->SetIsEnableAutoDelete(false);
 
