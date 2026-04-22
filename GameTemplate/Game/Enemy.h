@@ -16,6 +16,7 @@ public:
 	void Attack();// 攻撃する関数
 	void OnDamage(int damage);// ダメージを受ける関数
     void Render(RenderContext& rc) override;
+	const Vector3& GetPosition() const { return m_position; }
     
 	enum EnAnimationClip {
 		m_enAnimClip_Idle,   // 待機

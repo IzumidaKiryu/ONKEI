@@ -15,6 +15,7 @@ struct SongData {
 //‚±‚¢‚Â“®ì’†‚ÍNomal‚âBoss‚ÌInGameState‚Íˆê’â~B
 
 class RythmGame;
+class Player;
 class InGameRythmState:public IGameState
 {
 public:
@@ -44,6 +45,7 @@ private:
     Game* m_game = nullptr;
 	RythmGame* m_rythmGame = nullptr;
     RythmPhase m_phase = RythmPhase::CutIn;
+	Player* m_player = nullptr;
     float m_timer = 0.0f;
 
     bool m_isClear = false;

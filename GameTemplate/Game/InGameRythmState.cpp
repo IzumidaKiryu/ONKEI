@@ -5,7 +5,8 @@
 #include "fstream"
 #include "k2EngineLowPreCompile.h"
 #include <random>  // これを追加
-
+#include <BarnDamage.h>
+#include "Player.h"
 //リズムゲームのステート
 //順番：カットイン→五線譜拡大→リズムゲーム→終了→通常のゲームに戻る
 //「私の歌があなたを導く…！」
@@ -72,7 +73,7 @@ void InGameRythmState::Initialize(Game* game)
 
     m_screen_Graw.Init("Assets/sprite/Screen_Graw.DDS", 1920.0f, 1080.0f,AlphaBlendMode_Add);
     m_screen_Graw.SetPosition({ 0, 0, 0 });         // 画面中央に置く（全体を覆う）
-
+	m_player = FindGO<Player>("player");
 }
 
 void InGameRythmState::Update(Game* game)
@@ -92,6 +93,19 @@ void InGameRythmState::Update(Game* game)
         // ★ ここでチェック！
         // RythmGameが終了（Deactivate）していたら、Endフェーズへ移行させる
         if (m_rythmGame != nullptr && m_rythmGame->IsFinished()) {
+            // 1. スコアとコンボを取得
+            int totalScore = m_rythmGame->GetTotalScore(); // RythmGame.hにGetterが必要
+            int maxCombo = m_rythmGame->GetCombo();     // RythmGame.hにGetterが必要
+
+            // 2. ダメージ量の計算アルゴリズム（例：スコアの 1/100 + コンボボーナス）
+            float finalDamage = (totalScore * 0.01f) + (1.0f + (maxCombo * 0.05f));
+            float range = 1000.0f; // 攻撃範囲
+
+            // 3. バーンダメージオブジェクトの生成
+            // プレイヤーの座標（Gameクラス等から取得）を中心に発動
+            Vector3 playerPos = m_player->GetPosition();
+            auto barn = NewGO<BarnDamage>(0, "BarnDamage");
+            barn->Init(finalDamage, range, playerPos);
 			DeleteGO(m_rythmGame); // 終了したリズムゲームオブジェクトを削除
             m_phase = RythmPhase::End;
         }
