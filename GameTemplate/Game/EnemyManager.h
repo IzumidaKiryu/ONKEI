@@ -24,6 +24,11 @@ public:
 	void BossSpawn(); // ボスをスポーンさせる関数
 	void SetBossDeathFlag(bool isDead) { m_BossDeathFlag = isDead; }
 	bool GetBossDeathFlag() { return m_BossDeathFlag; }
+
+    // 管理している敵のリストを返すゲッターを追加
+    const std::vector<Enemy*>& GetEnemyList() const {
+        return m_enemies;
+    }
 private:
     void SpawnEnemies(); // 敵を一括生成する関数
 

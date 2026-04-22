@@ -43,6 +43,7 @@
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="SkillButton.cpp" />
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="BarnDamage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -82,5 +83,6 @@
     <ClInclude Include="Stage.h" />
     <ClInclude Include="SkillButton.h" />
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="BarnDamage.h" />
   </ItemGroup>
 </Project>

@@ -42,7 +42,7 @@ void RythmGame::CalcMaxCombo()
 }
 
 //スコア計算式は（https://www.youtube.com/watch?v=MkJFDHHXTw8）を参考にしました。
-void RythmGame::CalcScore(int judgeType, int staminaType, bool isAC, bool isSP)
+void RythmGame::CalcScore(int judgeType)
 {
 	// --- クリティカルのランダム抽選 ---
 	int criLevel = 0;
@@ -64,21 +64,17 @@ void RythmGame::CalcScore(int judgeType, int staminaType, bool isAC, bool isSP)
 	static const float judgeTable[] = { 1.2f, 1.1f, 1.0f, 0.0f };
 	const float judgementmagnification = judgeTable[std::clamp(judgeType, 0, 3)];
 
-	// 3. スタミナ倍率 (3段階: 1.0, 0.8, 0.6)
-	static const float staminaTable[] = { 1.0f, 0.8f, 0.6f };
-	const float staminamagnification = staminaTable[std::clamp(staminaType, 0, 2)];
+	
 
 	// 4. クリティカル倍率 (最大5段階まで対応可能)
 	static const float criticalTable[] = { 1.0f, 1.5f, 2.0f, 2.5f, 3.0f };
 	const float criticalmagnification = criticalTable[std::clamp(criLevel, 0, 4)];
 
-	// 5. その他 (AC, SP)
-	const float ACmagnification = isAC ? 1.1f : 1.0f;
-	const float SPmagnification = isSP ? 1.1f : 1.0f;
+
 
 	// --- 最終計算 ---
 	// baseScore * 全ての倍率
-	float totalMag = combomagnification * judgementmagnification * staminamagnification * criticalmagnification * ACmagnification * SPmagnification;
+	float totalMag = combomagnification * judgementmagnification *  criticalmagnification;
 
 	m_finalScore = static_cast<int>(m_charaBaseScore * totalMag);
 
@@ -363,6 +359,7 @@ void RythmGame::Judgment()
 			m_showJudgment = true;
 			m_judgmentDisplayTime = 0.5f;
 			PlaySE();
+			CalcScore(m_currentJudge);
 			auto eff = NewGO<HitEffect>(0, "effect");
 			eff->Init(Vector3(-150.0f, 0.0f, 0.0f));
 		}
@@ -383,6 +380,7 @@ void RythmGame::Judgment()
 				m_showJudgment = true;
 				m_judgmentDisplayTime = 0.5f;
 				PlaySE();
+				CalcScore(m_currentJudge);
 				auto eff = NewGO<HitEffect>(0, "effect");
 				eff->Init(Vector3(-150.0f, 0.0f, 0.0f));
 			}
@@ -392,6 +390,7 @@ void RythmGame::Judgment()
 				note->SetActive(false);
 				m_currentJudge = MISS;
 				m_comboCount = 0;
+				CalcScore(m_currentJudge);
 				m_showJudgment = true;
 				m_judgmentDisplayTime = 0.5f;
 			}
@@ -412,6 +411,7 @@ void RythmGame::Judgment()
 					m_currentJudge = MISS;
 					m_comboCount = 0;
 				}
+				CalcScore(m_currentJudge);
 				note->CompleteLongNote();
 				note->SetJudged(true);
 				note->SetActive(false);
@@ -427,6 +427,7 @@ void RythmGame::Judgment()
 				note->SetActive(false);
 				m_showJudgment = true;
 				m_judgmentDisplayTime = 0.5f;
+				CalcScore(m_currentJudge);
 			}
 			// 途中で離した場合
 			else if (!leftKeyHeld) {

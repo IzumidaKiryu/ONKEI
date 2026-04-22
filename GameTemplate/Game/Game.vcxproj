@@ -224,6 +224,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BarnDamage.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
@@ -254,6 +255,7 @@
     <ClCompile Include="TitleState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BarnDamage.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Chart.h" />
     <ClInclude Include="Enemy.h" />
