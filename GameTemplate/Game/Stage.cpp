@@ -12,7 +12,7 @@ Stage::~Stage()
 
 bool Stage::Start()
 {
-	m_stageModel.Init("Assets/modelData/RPGGround/bg.tkm");
+	m_stageModel.Init("Assets/modelData/stage/stage.tkm");
 	m_physicsStaticObject.CreateFromModel(m_stageModel.GetModel(), m_stageModel.GetModel().GetWorldMatrix());
 
 	return true;

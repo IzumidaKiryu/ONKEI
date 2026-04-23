@@ -137,14 +137,14 @@ void RythmGame::Init(std::string songName) {
 	m_currentJudgment = "";
 	m_judgmentDisplayTime = 0.0f;
 	m_showJudgment = false;
-	m_perfectText.Init("Assets/sprite/WONDERFUL.DDS", 500.0f, 180.0f);
-	m_greatText.Init("Assets/sprite/Great.DDS", 350.0f, 180.0f);
-	m_goodText.Init("Assets/sprite/Nice.DDS", 300.0f, 180.0f);
-	m_missText.Init("Assets/sprite/Bad.DDS", 400.0f, 180.0f);
-	m_perfectText.SetPosition({ 0.0f, 0.0f, 0.0f });
-	m_greatText.SetPosition({ 0.0f, 0.0f, 0.0f });
-	m_goodText.SetPosition({ 0.0f, 0.0f, 0.0f });
-	m_missText.SetPosition({ 0.0f, 0.0f, 0.0f });
+	m_perfectText.Init("Assets/UI/perfect.DDS", 960, 540);
+	m_greatText.Init("Assets/UI/nice.DDS", 960, 540);
+	m_goodText.Init("Assets/UI/good.DDS", 960, 540);
+	m_missText.Init("Assets/UI/miss.DDS", 960, 540);
+	m_perfectText.SetPosition(Vector3(0.0f, 300.0f, 0.0f));
+	m_greatText.SetPosition(Vector3(0.0f, 300.0f, 0.0f));
+	m_goodText.SetPosition(Vector3(0.0f, 300.0f, 0.0f));
+	m_missText.SetPosition(Vector3(0.0f, 300.0f, 0.0f));
 
 	m_backSprite.Init("Assets/sprite/white.DDS", 1920.0f, 1080.0f);
 

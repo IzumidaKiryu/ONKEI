@@ -23,8 +23,8 @@ bool PlayerUI::Start()
     m_hpBarFront.SetPivot({ 0.0f, 0.5f }); // 左端を起点にする
 
 	m_AttackGauge = new nsK2Engine::UIGaugeArc();
-	m_AttackGauge->Init("Assets/UI/action.DDS", 800, 400, "Assets/shader/SkillGauge.fx");
-    m_AttackGauge->SetPosition(Vector3(500.0f, -100.0f, 0.0f));
+	m_AttackGauge->Init("Assets/UI/action.DDS", 600, 300, "Assets/shader/SkillGauge.fx");
+    m_AttackGauge->SetPosition(Vector3(600.0f, -150.0f, 0.0f));
 
     // プレイヤーの参照を取得
     m_player = FindGO<Player>("player");
@@ -48,7 +48,7 @@ void PlayerUI::Update()
     m_hpBarFront.SetScale({ hpRate, 1.0f, 1.0f });
 
     // 画面左上に配置
-    Vector3 uiPos = { -600.0f, 400.0f, 0.0f };
+    Vector3 uiPos = { -600.0f, -300.0f, 0.0f };
     m_hpBarBack.SetPosition(uiPos);
     m_hpBarFront.SetPosition(uiPos);
 
