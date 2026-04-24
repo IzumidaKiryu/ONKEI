@@ -31,7 +31,7 @@ public:
 		m_enAnimClip_Num,
 	};
 
-	Vector3 m_position = Vector3::Zero;
+	Vector3 m_position = { 0.0f, 0.0f, -300.0f };
 	Vector3 m_moveSpeed = Vector3::Zero;
 	Vector3 m_StartMoveSpeed = { 0.0f,0.0f,0.0f };
 	Vector3 colpos = Vector3::Zero;

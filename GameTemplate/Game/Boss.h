@@ -14,6 +14,8 @@ public:
     void OnDamage(int damage);
     void SetPosition(Vector3 pos) { m_position = pos; }
 
+    const Vector3& GetPosition() const { return m_position; }
+
 private:
     void ManageState();  // 思考ルーチン
     void AnimState();    // アニメーション制御

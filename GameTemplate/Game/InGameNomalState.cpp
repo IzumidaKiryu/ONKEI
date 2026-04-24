@@ -12,7 +12,7 @@
 #include "SkillButton.h"
 namespace
 {
-	int CREACOUNT=11; // 軟体倒したらクリアにするか変数
+	int CREACOUNT=20; // 軟体倒したらクリアにするか変数
 	const float SKILLGAUGEMAX = 100.0f; // スキルゲージの最大値
 }
 

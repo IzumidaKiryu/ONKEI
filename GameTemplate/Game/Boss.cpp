@@ -24,7 +24,7 @@ bool Boss::Start()
     // 2. HPバー（UI）の初期化
     // 画面下部に固定するため、テクスチャは白い画像を用意して色を付ける
     m_hpBarBossBack.Init("Assets/sprite/white.dds", 1000.0f, 40.0f);
-    m_hpBarBoss.Init("Assets/sprite/white.dds", 1000.0f, 40.0f);
+    m_hpBarBoss.Init("Assets/UI/bar.dds", 1000.0f, 40.0f);
 
     m_hpBarBossBack.SetMulColor({ 0.2f, 0.2f, 0.2f, 0.8f }); // 暗いグレー（背景）
     m_hpBarBoss.SetMulColor({ 0.8f, 0.0f, 0.0f, 1.0f });     // 鮮やかな赤（体力）
@@ -35,8 +35,8 @@ bool Boss::Start()
 
     // 画面下部に配置（座標系に合わせて調整してください）
     // CalcScreenPositionを使わず、直接スクリーン座標を指定
-    m_hpBarBossBack.SetPosition({ -500.0f, -300.0f, 0.0f });
-    m_hpBarBoss.SetPosition({ -500.0f, -300.0f, 0.0f });
+    m_hpBarBossBack.SetPosition({ -500.0f, 400.0f, 0.0f });
+    m_hpBarBoss.SetPosition({ -500.0f, 400.0f, 0.0f });
 
     // 3. 物理・プレイヤー取得
     m_player = FindGO<Player>("player");
