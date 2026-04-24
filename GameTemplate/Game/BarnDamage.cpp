@@ -2,6 +2,7 @@
 #include "BarnDamage.h"
 #include "EnemyManager.h" // 敵を管理しているクラス
 #include "Enemy.h"        // 敵の基底クラス
+#include "Boss.h"         // ボスクラス 
 
 void BarnDamage::Init(float damage, float range, const Vector3& pos)
 {
@@ -31,6 +32,24 @@ void BarnDamage::Update()
                 enemy->OnDamage(m_damage);
             }
         }
+
+        // 1. EnemyManagerからボスを取得
+        Boss* boss = enemyManager->GetBoss();
+
+        // 2. ボスが存在している時だけ判定（ボス戦以外でエラーにならないように）
+        if (boss != nullptr) {
+
+            // 3. プレイヤー（自分）とボスの距離を計算
+            // m_position は攻撃の中心点（プレイヤーや弾の位置）
+            Vector3 diff = boss->GetPosition() - m_position;
+            float distance = diff.Length();
+
+            // 4. 一定範囲内（m_range）ならダメージ！
+            if (distance <= m_range) {
+                boss->OnDamage(m_damage);
+            }
+        }
+
     }
 
     // エフェクトを出したり、SEを鳴らしたりする場合はここに追加

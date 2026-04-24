@@ -3,43 +3,53 @@
 #include "Enemy.h"
 #include "Boss.h"
 
-void EnemyManager::Init() {
-    // 1. 座標データテーブルを作成
-    // ここに座標を追加するだけで敵が増やせます
-    m_spawnList = {
-        { { 7000.0f, 0.0f, -12000.0f } },
-        { { 7100.0f, 0.0f, -3500.0f } },
-        { { 7000.0f, 0.0f, 100.0f } },
-        { { 7000.0f, 0.0f, -300.0f } },
-        { { 4200.0f, 0.0f, -7100.0f } },
-        { { 4400.0f, 0.0f, -7100.0f } },
-        { { -7000.0f, 0.0f, -7000.0f } },
-        { { -4000.0f, 0.0f, -7000.0f } },
-        { { -10000.0f, 0.0f, -7000.0f } },
-        { { 7000.0f, 0.0f, -3500.0f } },
-        { { 7200.0f, 0.0f, -3500.0f } },
-        { { 7300.0f, 0.0f, -3500.0f } },
-        { { 7400.0f, 0.0f, -3500.0f } },
-    };
+namespace {
+    const float SPORN_RANGE = 1000.0f;//ランダム生成範囲を設定
+    const float SPAWN_LIMIT_TIME = 1.0f; // 1秒という数値を定数化
+    const int MAX_ENEMIES = 10;          // 最大数も定数化
+}
 
-    // 2. 敵の生成を実行
-    SpawnEnemies();
+void EnemyManager::Init() {
+
+    m_enemies.clear();
+    m_spawnTimer = 0.0f;     
+    // 最初に数体出しておきたい場合はここでSpawnを呼ぶ
 }
 
 void EnemyManager::SpawnEnemies() {
-	int count = 0;
-    // ループ回数はデータの数（m_spawnList.size()）だけ回す
-    for (const auto& data : m_spawnList) {
-		char name[32];
-        sprintf_s(name, "enemy_%d", count);
-        Enemy* enemy = NewGO<Enemy>(0,name); // 優先度は一括で0などでOK
-        enemy->m_position = data.pos;
-        enemy->m_firstPos = data.pos;
+  // 1. タイマーを進める
+  m_spawnTimer += g_gameTime->GetFrameDeltaTime();
 
-        // リストに追加
-        m_enemies.push_back(enemy);
-		count++;
-    }
+  // 2. タイマーが一定時間を超えたらスポーン処理を行う
+  if (m_spawnTimer >= SPAWN_LIMIT_TIME) {
+      m_spawnTimer = 0.0f; // タイマーをリセット
+
+      // 3. 敵の数が最大数未満なら新しい敵をスポーン
+      if (m_enemies.size() < MAX_ENEMIES) {
+
+          // 乱数で -0.5 ～ 0.5 の範囲を作り、範囲(SPORN_RANGE)をかける
+          float rx = ((float)rand() / RAND_MAX) - 0.5f;
+          float rz = ((float)rand() / RAND_MAX) - 0.5f;
+
+          Vector3 randomPos = {
+              rx * SPORN_RANGE,
+              0.0f,
+              rz * SPORN_RANGE
+          };
+
+          // 名前をユニークにする（デバッグしやすくなります）
+          static int totalCount = 0;
+          char name[32];
+          sprintf_s(name, "enemy_%d", totalCount++);
+
+          Enemy* enemy = NewGO<Enemy>(0, name);
+          enemy->m_position = randomPos;
+          enemy->m_firstPos = randomPos;
+
+          // リストに追加
+          m_enemies.push_back(enemy);
+      }
+  }
 }
 
 // 敵から「消えるよ」と通知が来たらリストから消す
@@ -52,6 +62,12 @@ void EnemyManager::OnEnemyDestroy(Enemy* enemy) {
 
 void EnemyManager::BossSpawn()
 {
+    // 1. スポーン機能を止める（フラグを折る）
+    m_isSpawnActive = false;
+
+    // 2. ここで呼び出す！これでザコ敵が全員消える
+    ClearAllEnemies();
+
     m_boss = NewGO<Boss>(0, "boss");
 
     // 3. ボスの初期位置を設定（ステージの奥など）
@@ -66,8 +82,14 @@ void EnemyManager::ClearAllEnemies() {
         DeleteGO(enemy);
     }
     m_enemies.clear();
+	m_spawnTimer = 0.0f; // タイマーもリセット
+	m_BossDeathFlag = false; // ボスの死亡フラグもリセット
 }
 
 void EnemyManager::Update() {
-    // 必要ならここに全滅判定や追加スポーン処理を書く
+	//ボスを呼びだされるまではザコ敵をスポーンさせる
+    if (m_isSpawnActive) {
+        SpawnEnemies();
+    }
+
 }
