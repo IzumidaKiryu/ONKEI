@@ -2,7 +2,14 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "EnemyManager.h"
+#include "EnemyAttack.h"
 
+enum EnMoveState {
+    m_enMoveState_Idle,   // 待機
+    m_enMoveState_Walk,   // 歩き
+    m_enMoveState_Attack, // 攻撃
+    m_enMoveState_Num,
+};
 
 //コリジョンオブジェクトを消すためにデストラクタが必要
 Enemy::~Enemy()
@@ -15,19 +22,9 @@ Enemy::~Enemy()
 
 bool Enemy::Start() {
 
-  
-
-    // アニメーションのロード
-    m_animationClips[m_enAnimClip_Idle].Load("Assets/Karimodel/SkeletonAnim/SkeletonIdle.tka");
-    m_animationClips[m_enAnimClip_Idle].SetLoopFlag(true);
-    m_animationClips[m_enAnimClip_Walk].Load("Assets/Karimodel/SkeletonAnim/SkeletonWalk.tka");
-    m_animationClips[m_enAnimClip_Walk].SetLoopFlag(true);
-    m_animationClips[m_enAnimClip_Attack].Load("Assets/Karimodel/SkeletonAnim/SkeletonAttack.tka");
-    m_animationClips[m_enAnimClip_Attack].SetLoopFlag(false); // 攻撃は1回ずつ
-    m_animationClips[m_enAnimClip_Death].Load("Assets/Karimodel/SkeletonAnim/SkeletonDeath.tka");
-    m_animationClips[m_enAnimClip_Death].SetLoopFlag(false); 
-    m_modelRender.Init("Assets/KariModel/Skeleton/Skeleton.tkm", m_animationClips, m_enAnimClip_Num); // 敵のモデル
-	m_modelRender.SetScale({ 15.0f, 15.0f, 15.0f });
+    m_modelRender.Init("Assets/ModelData/Enemy/enemy.tkm"); // 敵のモデル
+	m_modelRender.SetScale({ 1.0f, 1.0f, 1.0f });
+	m_modelRender.SetPosition(m_position);
 
 
     // 2. 当たり判定用コリジョンの作成
@@ -66,15 +63,24 @@ void Enemy::Update() {
     if (m_enemyManager->IsActive() == false)return;
 
 	//関数の呼び出し
+	Move();
 	ManageState();
-	AnimState();
+	MoveState();
     UpdateHPBar();
     
 }
 
 void Enemy::Move()
 {
-
+	//攻撃をするならばプレイヤーの方を向く
+    if(m_enemyState == 2)
+    {
+        Vector3 diff = m_player->m_position - m_position;
+        diff.y = 0.0f; // 水平方向のみにする
+        diff.Normalize();
+        m_rot.SetRotationYFromDirectionXZ(diff);
+        m_modelRender.SetRotation(m_rot);
+	}
 }
 
 void Enemy::Rotation()
@@ -90,65 +96,57 @@ void Enemy::ManageState()
     diff.y = 0.0f;
     float distance = diff.Length();
 
-    // --- 1. 死亡判定 (最優先) ---
-    if (m_hp <= 0)
-    {
-        m_enemyState = 3; // 死亡
-        if (m_modelRender.IsPlayingAnimation() == false) { // セミコロンを削除し、ブロックにする
-            // ★重要：消える前にマネージャーの名簿から自分を消してもらう
-            if (m_enemyManager) {
-                m_enemyManager->OnEnemyDestroy(this);
-                m_enemyManager->CountUpDeathCount();
-            }
-            DeleteGO(this);
-            return; // 削除したのでこれ以降の処理はしない
+    // 1. 死亡判定
+    if (m_hp <= 0) {
+        m_enemyState = 3;
+        if (m_enemyManager) {
+            m_enemyManager->OnEnemyDestroy(this);
+            m_enemyManager->CountUpDeathCount();
         }
+        DeleteGO(this);
+        return;
     }
-    // --- 2. 攻撃中の継続判定 ---
-    // 攻撃中の場合は、アニメーションが終わるまでステートを固定する
-    else if (m_enemyState == 2)
-    {
-        // 攻撃アニメが終わったかチェック
-        if (m_modelRender.IsPlayingAnimation() == false) {
-            m_enemyState = 0;         // 待機に戻る
-            m_hasDealtDamage = false; // フラグをリセット
-        }
-        else {
-            // アニメが続いているなら攻撃関数を呼ぶ
-            Attack();
-        }
-    }
-    // --- 3. 通常のステート遷移 (待機・歩き・攻撃開始) ---
-    else if (distance < 150.0f) {
-        m_enemyState = 2;         // 攻撃開始
-        m_hasDealtDamage = false; // 開始時にリセット
-    }
-    else if (distance < 1000.0f) {
-        m_enemyState = 1;         // 追いかける
 
+    // 2. 攻撃ステートの管理
+    if (m_enemyState == 2) {
+        Attack(); // 内部でタイマーが進む
+
+        // 2.0秒経過したらリセット
+        if (m_attackTimer >= 2.0f) {
+            m_enemyState = 0;         // これで次のUpdateで距離判定が行われる
+            m_attackTimer = 0.0f;
+            m_hasDealtDamage = false;
+            m_attackRot = false;
+        }
+        // 攻撃ステートの間はここで処理を終了して、移動させない
+        goto UpdatePosition;
+    }
+
+    // 3. 次の行動判定（攻撃ステート以外の時に来る）
+    if (distance < 350.0f) {
+        m_enemyState = 2; // 攻撃開始
+    }
+    else if (distance < 1000.0f) { // 追従範囲（1000だと遠すぎる場合があるので調整）
+        m_enemyState = 1;
         diff.Normalize();
         Vector3 moveSpeed = diff * 150.0f;
-        m_position = m_charaCon.Execute(moveSpeed, 1.0f / 60.0f);
+        m_position = m_charaCon.Execute(moveSpeed, g_gameTime->GetFrameDeltaTime());
 
         m_rot.SetRotationYFromDirectionXZ(diff);
         m_modelRender.SetRotation(m_rot);
-		m_wanderPosSet = false; // プレイヤーを追いかけている間は徘徊地点をリセット
+        m_wanderPosSet = false;
     }
     else {
-        //m_enemyState = 0;         // 遠ければ待機
-		m_attackTimer = 0.0f; // プレイヤーが遠ざかったら攻撃タイマーをリセット
-
-        if (m_wanderPosSet == false) {
-            //地点の設定
+        // 遠いので徘徊
+        if (!m_wanderPosSet) {
             m_wanderPos = m_position;
             m_wanderPosSet = true;
         }
-
-        Wander();// 徘徊処理を呼ぶ
-		
+        Wander();
     }
 
-    // --- 4. 共通の更新処理 ---
+UpdatePosition:
+    // 共通の更新処理
     Vector3 colPos = m_position;
     colPos.y += 50.0f;
     m_collisionObject->SetPosition(colPos);
@@ -156,19 +154,9 @@ void Enemy::ManageState()
     m_modelRender.Update();
 }
 
-// アニメーションの再生
-void Enemy::AnimState()
+void Enemy::MoveState()
 {
-    switch (m_enemyState) {
-    case 0: m_modelRender.PlayAnimation(m_enAnimClip_Idle); 
-        break;
-    case 1: m_modelRender.PlayAnimation(m_enAnimClip_Walk); 
-        break;
-    case 2: m_modelRender.PlayAnimation(m_enAnimClip_Attack); 
-        break;
-    case 3: m_modelRender.PlayAnimation(m_enAnimClip_Death); 
-        break;
-    }
+
 }
 
 // 敵の徘徊を管理する関数
@@ -207,28 +195,43 @@ void Enemy::Wander()
 // 攻撃判定用関数
 void Enemy::Attack()
 {
-	//既に攻撃が当たっている場合は無視
-	if (m_hasDealtDamage) return;
+    m_attackTimer += g_gameTime->GetFrameDeltaTime();
 
-	//攻撃判定用のタイマー更新
-	m_attackTimer += g_gameTime->GetFrameDeltaTime();
+    if (m_hasDealtDamage) return;
 
-    //タイマーが一秒経過したら
-    if (m_attackTimer >= 1.0f) {
-        //プレイヤーとの距離を計算
-        Vector3 diff = m_player->m_position - m_position;
-        diff.y = 0.0f; // 水平方向の距離だけを考慮
-        float distance = diff.Length();
+    // --- STEP 1: 予兆 (0.0s ～ 1.0s) ---
+    if (m_attackTimer < 1.0f) {
+        if (!m_attackRot) {
+            // プレイヤーへの方向を計算
+            Vector3 diff = m_player->m_position - m_position;
+            diff.y = 0.0f;
+            diff.Normalize();
 
-        // 攻撃判定距離（150.0f〜170.0fくらいで調整）
-        if (distance < 160.0f) {
-            m_player->OnDamege(10); // プレイヤーにダメージを与える
-            m_hasDealtDamage = true; // ダメージを与えたのでフラグを立てる
+            // ★重要：この瞬間の方向を「狙い」として保存！
+            m_attackDir = diff;
+
+            m_rot.SetRotationYFromDirectionXZ(m_attackDir);
+            m_modelRender.SetRotation(m_rot);
+            m_attackRot = true;
         }
-
-        m_attackTimer = 0.0f; // タイマーをリセット
     }
+    // --- STEP 2: 発射 (1.0s 経過時) ---
+    else if (m_attackTimer >= 1.0f) {
+        m_enemyAttack = NewGO<EnemyAttack>(0);
 
+        // 出現位置：エネミーの座標 + (狙った方向に少し進める) + (高さ調整)
+        // これで「固定値-100」ではなく、エネミーの正面から弾が出ます
+        m_enemyAttack->m_position = m_position + (m_attackDir * 100.0f) + Vector3(0.0f, 100.0f, 0.0f);
+
+        // ★重要：弾に「狙った方向」を渡す
+        // EnemyAttack.h に public で Vector3 m_direction; を作っておくか、
+        // SetDirection() のような関数を作って渡してください
+        m_enemyAttack->m_direction = m_attackDir;
+
+        m_enemyAttack->m_rotation = m_rot;
+
+        m_hasDealtDamage = true;
+    }
 }
 
 // ダメージを受ける関数
@@ -236,12 +239,6 @@ void Enemy::OnDamage(int damage)
 {
 	if (m_hp <= 0) return; // すでに死んでいる場合は無視
 	m_hp -= damage;
-}
-
-void Enemy::Render(RenderContext& rc) {
-    m_modelRender.Draw(rc);
-    m_hpBarBackSprite.Draw(rc);
-	m_hpBarSprite.Draw(rc);
 }
 
 void Enemy::UpdateHPBar() {
@@ -273,3 +270,10 @@ void Enemy::UpdateHPBar() {
     m_hpBarBackSprite.Update();
     m_hpBarSprite.Update();
 }
+
+void Enemy::Render(RenderContext& rc) {
+    m_modelRender.Draw(rc);
+    m_hpBarBackSprite.Draw(rc);
+	m_hpBarSprite.Draw(rc);
+}
+

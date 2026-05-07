@@ -9,7 +9,7 @@
 namespace
 {
 	//自動削除時間。
-	const float DELETE_TIME = 0.28f;
+	const float DELETE_TIME = 0.5f;
 	const Vector3 BOX_SCALE = { 100.0f,100.0f,100.0f };
 	const Vector3 EFFECT_SCALE = { 30.0f,30.0f,30.0f };
 }
