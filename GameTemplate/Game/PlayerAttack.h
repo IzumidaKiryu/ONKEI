@@ -16,7 +16,6 @@ public:
 	//エフェクトの作成。
 	void CreateEffect();
 
-public:
 	//座標を取得する。
 	const Vector3& GetPosition()const
 	{
@@ -42,7 +41,7 @@ private:
 	GameCamera* m_gameCamera;				//カメラ。
 	CollisionObject* m_collisionObj;				//コリジョンオブジェクト。
 	EffectEmitter* m_effectEmitter;			//エフェクト
-	const float			m_amuletSpeed = 700.0f;	//御札の移動速度。
+	const float			m_amuletSpeed = 600.0f;	//御札の移動速度。
 	float				m_deleteTimer = 0.0f;		//削除を管理するタイマー。
 	Vector3				m_position;					//座標。
 	Vector3				m_direction;				//移動方向。

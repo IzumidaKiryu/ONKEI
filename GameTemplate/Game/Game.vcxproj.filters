@@ -44,6 +44,7 @@
     <ClCompile Include="SkillButton.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="BarnDamage.cpp" />
+    <ClCompile Include="EnemyAttack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -84,5 +85,6 @@
     <ClInclude Include="SkillButton.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="BarnDamage.h" />
+    <ClInclude Include="EnemyAttack.h" />
   </ItemGroup>
 </Project>
