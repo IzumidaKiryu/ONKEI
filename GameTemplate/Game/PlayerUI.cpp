@@ -4,10 +4,12 @@
 
 PlayerUI::PlayerUI()
 {
+
 }
 
 PlayerUI::~PlayerUI()
 {
+
 }
 
 bool PlayerUI::Start()
@@ -22,6 +24,21 @@ bool PlayerUI::Start()
     m_hpBarFront.SetMulColor({ 0.0f, 1.0f, 0.0f, 1.0f }); // 緑色
     m_hpBarFront.SetPivot({ 0.0f, 0.5f }); // 左端を起点にする
 
+	// --- 3. キャラアイコンの初期化 ---
+	m_charaIcon.Init("Assets/UI/charaIcon.DDS", 1920, 1080);
+	m_charaIcon.SetPosition({ -700.0f, -300.0f, 0.0f }); // HPバーの左端あたりに配置
+	m_charaIcon.SetScale({ 0.25f, 0.25f, 1.0f }); // アイコンを小さくする
+
+    //ボタンUIの初期化
+    m_buttonA.Init("Assets/UI/buttonA.DDS", 192, 108);
+    m_buttonA.SetPosition({ 670.0f,-380.0f,0.0f });
+    m_buttonA.Update();
+
+    m_buttonB.Init("Assets/UI/buttonB.DDS", 192, 108);
+    m_buttonB.SetPosition({ 440.0f,-380.0f,0.0f });
+    m_buttonB.Update();
+
+	// --- 4. 攻撃ゲージの初期化 ---
 	m_AttackGauge = new nsK2Engine::UIGaugeArc();
 	m_AttackGauge->Init("Assets/UI/action.DDS", 600, 300, "Assets/shader/SkillGauge.fx");
     m_AttackGauge->SetPosition(Vector3(600.0f, -150.0f, 0.0f));
@@ -48,12 +65,26 @@ void PlayerUI::Update()
     m_hpBarFront.SetScale({ hpRate, 1.0f, 1.0f });
 
     // 画面左上に配置
-    Vector3 uiPos = { -600.0f, -300.0f, 0.0f };
+    Vector3 uiPos = { -650.0f, -350.0f, 0.0f };
     m_hpBarBack.SetPosition(uiPos);
     m_hpBarFront.SetPosition(uiPos);
 
+	//ゲージの色をHPの割合に応じて変える（緑→オレンジ→赤）
+	if (hpRate > 0.5f) {
+		m_hpBarFront.SetMulColor({ 0.0f, 1.0f, 0.0f, 1.0f }); // 緑色
+	}
+	else if (hpRate > 0.25f) {
+		m_hpBarFront.SetMulColor({ 1.0f, 0.5f, 0.0f, 1.0f }); // オレンジ色
+	}
+	else {
+		m_hpBarFront.SetMulColor({ 1.0f, 0.0f, 0.0f, 1.0f }); // 赤色
+	}
+
+
     m_hpBarBack.Update();
     m_hpBarFront.Update();
+
+	m_charaIcon.Update();
 
 	m_AttackGauge->Update(m_attackGaugeRate, 0.0f, 0.0f, 3.14f, 0.0f, 0.5f);
 }
@@ -63,5 +94,8 @@ void PlayerUI::Render(RenderContext& rc)
     // 背景 -> 前景の順に描画
     m_hpBarBack.Draw(rc);
     m_hpBarFront.Draw(rc);
+	m_charaIcon.Draw(rc);
+    m_buttonA.Draw(rc);
+	m_buttonB.Draw(rc);
 	m_AttackGauge->Draw(rc);
 }

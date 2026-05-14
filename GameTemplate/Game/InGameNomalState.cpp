@@ -10,9 +10,11 @@
 #include "InGameRythmState.h"
 #include "Stage.h"
 #include "SkillButton.h"
+#include "TaskBarUI.h"
+
 namespace
 {
-	int CREACOUNT=20; // 軟体倒したらクリアにするか変数
+	
 	const float SKILLGAUGEMAX = 100.0f; // スキルゲージの最大値
 }
 
@@ -22,9 +24,12 @@ InGameNomalState::~InGameNomalState() {
 	DeleteGO(m_enemyManager);
 	DeleteGO(m_playerUI);
 	DeleteGO(stage);
+	DeleteGO(m_skillButton);
+	DeleteGO(m_taskBarUI);
 }
 
 void InGameNomalState::Initialize(Game* game) {
+
     m_game = game;
 	m_player = NewGO<Player>(0,"player");
 	// 「あなたの親は私（NormalState）ですよ」と教える
@@ -44,6 +49,9 @@ void InGameNomalState::Initialize(Game* game) {
 
 	m_skillButton = NewGO<SkillButton>(0, "skillButton");
 	m_skillButton->Init("Assets/UI/skill.DDS", SKILLGAUGEMAX); // アイコンとクールタイムを指定して初期化
+
+	//タスクバーの作成。
+	m_taskBarUI = NewGO<TaskBarUI>(0, "taskBarUI");
 
 	//空の作成。
 	m_skyCube = NewGO<SkyCube>(0, "skyCube");
@@ -106,6 +114,7 @@ void InGameNomalState::OnPause()
 	m_camera->Deactivate();
 	m_enemyManager->Deactivate();
 	m_playerUI->Deactivate();
+	m_taskBarUI->Deactivate();
 	this->Deactivate(); // ステートを非アクティブにする
 }
 
@@ -115,6 +124,7 @@ void InGameNomalState::OnResume()
 	m_camera->Activate();
 	m_enemyManager->Activate();
 	m_playerUI->Activate();
+	m_taskBarUI->Activate();
 	this->Activate(); // ステートをアクティブにする
 }
 
@@ -124,7 +134,7 @@ void InGameNomalState::UpdateSPButton()
 
 void InGameNomalState::StageClear()
 {
-	if (CREACOUNT <= m_enemyManager->GetDeathCount()&&m_isChangeIsReady==false) {
+	if (m_CrearCount <= m_enemyManager->GetDeathCount()&&m_isChangeIsReady==false) {
 				m_isGameClear = true;
 				m_isChangeIsReady = true; // ステート遷移が発動したことを示すフラグを立てる
 	}

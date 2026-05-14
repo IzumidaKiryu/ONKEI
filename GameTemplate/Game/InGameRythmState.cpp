@@ -55,8 +55,12 @@ void InGameRythmState::Initialize(Game* game)
     }
 
     // カットイン画像の読み込み（サイズは適宜調整してください）
-    m_cutInSprite.Init("Assets/sprite/Sian.DDS", 1000.0f, 720.0f);
-    m_cutInBg.Init("Assets/sprite/CutInBg.DDS", 1920.0f, 1080.0f);      
+    m_cutInSprite.Init("Assets/UI/skillPlayer.DDS", 1920.0f, 1080.0f);
+    m_cutInBg.Init("Assets/sprite/CutInBg.DDS", 1920.0f, 1080.0f);
+    m_cutInFont.Init("Assets/UI/skillActionFont.DDS", 1920.0f, 1080.0f);
+	m_cutInFont.SetPosition({ 0.0f,0.0f,0.0f });
+
+
     // --- 初期位置の設定 ---
     // キャラクター：画面の左端外 (X = -1200.0f くらい)
     m_charaPos = { -1200.0f, 0.0f, 0.0f };
@@ -269,6 +273,8 @@ void InGameRythmState::DrawCutIn(RenderContext& rc)
     m_cutInBg.Draw(rc);
     // その上にキャラクターを描画
     m_cutInSprite.Draw(rc);
+	// 最後に技名のフォントを描画
+    m_cutInFont.Draw(rc);
     m_screen_Graw.Draw(rc); // ここに入れると背景が光る
 
 }

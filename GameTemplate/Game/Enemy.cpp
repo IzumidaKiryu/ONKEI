@@ -46,9 +46,11 @@ bool Enemy::Start() {
 
     // --- HPバーの初期化 ---
     // 背景（Assets/Image/hp_back.dds などを用意してください）
-    m_hpBarBackSprite.Init("Assets/sprite/white.DDS", 60.0f, 7.0f);
+    m_hpBarBackSprite.Init("Assets/UI/bar.DDS", 60.0f, 7.0f);
+	m_hpBarBackSprite.SetMulColor({ 0.0f, 0.0f, 0.0f, 1.0f }); // 黒色にする
     // バー本体（Assets/Image/hp_bar.dds など）
-    m_hpBarSprite.Init("Assets/sprite/Select.DDS", 60.0f, 7.0f);
+    m_hpBarSprite.Init("Assets/UI/bar.DDS", 60.0f, 7.0f);
+	m_hpBarSprite.SetMulColor({ 1.0f, 0.0f, 0.0f, 1.0f }); // 赤色にする
 
     // 重要：ピボットを左端に設定（HPが減った時に左に縮むようにするため）
     m_hpBarSprite.SetPivot({ 0.0f, 0.5f });

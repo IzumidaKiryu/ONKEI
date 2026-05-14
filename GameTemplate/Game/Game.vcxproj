@@ -237,6 +237,7 @@
     <ClCompile Include="InGameRythmState.cpp" />
     <ClCompile Include="Loading.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NomalTaskUI.cpp" />
     <ClCompile Include="Note.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAttack.cpp" />
@@ -253,6 +254,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Preview|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="system\system.cpp" />
+    <ClCompile Include="TaskBarUI.cpp" />
     <ClCompile Include="TitleState.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -270,6 +272,7 @@
     <ClInclude Include="InGameNomalState.h" />
     <ClInclude Include="InGameRythmState.h" />
     <ClInclude Include="Loading.h" />
+    <ClInclude Include="NomalTaskUI.h" />
     <ClInclude Include="Note.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAttack.h" />
@@ -282,6 +285,7 @@
     <ClInclude Include="Stage.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
+    <ClInclude Include="TaskBarUI.h" />
     <ClInclude Include="TitleState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

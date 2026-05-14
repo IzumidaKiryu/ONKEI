@@ -31,6 +31,9 @@ public:
     }
 
     Boss* GetBoss() const { return m_boss; }
+
+    int m_deathCount = 0;
+
 private:
 
     Boss* m_boss = nullptr; // ボスのポインタ
@@ -38,7 +41,7 @@ private:
     std::vector<EnemySpawnData> m_spawnList;
     std::vector<Enemy*> m_enemies; // 生成したエネミーを覚えておくリスト
     float m_spawnTimer = 0.0f;
-    int m_deathCount = 0;
+    
 	bool m_BossDeathFlag = false; // ボスが死んだかどうかのフラグ
 	bool m_isSpawnActive = true; // 敵のスポーンが許可されているかどうかのフラグ
 	

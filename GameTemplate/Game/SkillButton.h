@@ -30,5 +30,5 @@ private:
     float m_hpRate = 0.0f;       // 0.0 ～ 1.0
     bool m_isCoolingDown = true;
 
-    Vector3 m_position = Vector3(350.0f,-300.0f,0.0f);
+    Vector3 m_position = Vector3(325.0f,-280.0f,0.0f);
 };

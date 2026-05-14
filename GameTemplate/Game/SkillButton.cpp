@@ -6,7 +6,7 @@ void SkillButton::Init(const char* skillIconPath, float coolTime)
    
     // ゲージ（シェーダーで「暗い部分」と「明るい部分」を塗り分ける）
     m_gauge = new nsK2Engine::UIGaugeArc();
-    m_gauge->Init(skillIconPath, 600.0f, 300.0f, "Assets/shader/SkillGauge.fx");
+    m_gauge->Init(skillIconPath, 750.0f, 400.0f, "Assets/shader/SkillGauge.fx");
     m_gauge->SetPivot({ 0.5f, 0.5f }); // 中心基準
 }
 

@@ -125,6 +125,11 @@ void RythmGame::Init(std::string songName) {
 	g_soundEngine->ResistWaveFileBank(1, "Assets/SE/shyan.wav");
 	m_perfectSound = NewGO<SoundSource>(1, "perfectSound");
 
+	//レーンの描画
+	m_lane.Init("Assets/UI/lane.DDS", 2000, 350);
+	m_lane.SetPosition({ 300.0f,0.0f,0.0f });
+	m_lane.Update();
+
 	// ★ 判定円の初期化 (右から左仕様：X=-150で固定し、Yをレーンごとに上下に分ける)
 	m_judgmentiCrcule.Init("Assets/sprite/parple.DDS", 60.0f, 60.0f);
 
@@ -141,10 +146,15 @@ void RythmGame::Init(std::string songName) {
 	m_greatText.Init("Assets/UI/nice.DDS", 960, 540);
 	m_goodText.Init("Assets/UI/good.DDS", 960, 540);
 	m_missText.Init("Assets/UI/miss.DDS", 960, 540);
-	m_perfectText.SetPosition(Vector3(0.0f, 300.0f, 0.0f));
-	m_greatText.SetPosition(Vector3(0.0f, 300.0f, 0.0f));
-	m_goodText.SetPosition(Vector3(0.0f, 300.0f, 0.0f));
-	m_missText.SetPosition(Vector3(0.0f, 300.0f, 0.0f));
+	m_perfectText.SetPosition(Vector3(0.0f, 100.0f, 0.0f));
+	m_greatText.SetPosition(Vector3(0.0f, 100.0f, 0.0f));
+	m_goodText.SetPosition(Vector3(0.0f, 100.0f, 0.0f));
+	m_missText.SetPosition(Vector3(0.0f, 100.0f, 0.0f));
+
+	m_perfectText.Update();
+	m_greatText.Update();
+	m_goodText.Update();
+	m_missText.Update();
 
 	m_backSprite.Init("Assets/sprite/white.DDS", 1920.0f, 1080.0f);
 
@@ -280,6 +290,8 @@ void RythmGame::GamePlay()
 // --- Render: 描画処理 (復活・横流れ対応) ---
 void RythmGame::Render(RenderContext& rc) {
 	if (!m_isStarted) return; // ゲーム開始前は更新しない
+
+	m_lane.Draw(rc);
 
 	m_backSprite.Draw(rc);
 
