@@ -16,13 +16,15 @@ Note::Note(const NoteData& data)
     m_isLongNoteStarted(false), m_isLongNoteHeld(false), m_isLongNoteCompleted(false),
     m_longNoteSpritesInitialized(false), m_offset(0.0f)
 {
-    m_sprite.Init("Assets/sprite/TapNote.DDS", 60.0f, 60.0f);
+
+    m_sprite.Init("Assets/UI/tapNote.DDS", 500.0f,250.0f);
 
     // ロングノーツ用のスプライトを初期化
     if (IsLongNote()) {
-        m_longNoteStart.Init("Assets/sprite/LongNote.DDS", 60.0f, 60.0f);
-        m_longNoteEnd.Init("Assets/sprite/LongNote.DDS", 60.0f, 60.0f);
+        m_longNoteStart.Init("Assets/UI/note.DDS", 500.0f, 250.0f);
+        m_longNoteEnd.Init("Assets/UI/note.DDS", 500.0f, 250.0f);
         m_longNoteBody.Init("Assets/sprite/white.DDS", 60.0f, 60.0f);
+        m_longNoteBody.SetMulColor({ 0.8f,1.0f,1.0f,1.0f });//淡い水色
         m_longNoteSpritesInitialized = true;
     }
 
@@ -191,6 +193,7 @@ bool Note::IsLongNoteInProgress() const
 // ロングノーツの描画（長さを視覚的に表現）
 void Note::RenderLongNote(RenderContext& rc)
 {
+
     if (!IsLongNote() || !m_longNoteSpritesInitialized) return;
 
     // Updateで位置とスケールを更新済みなので描画だけ

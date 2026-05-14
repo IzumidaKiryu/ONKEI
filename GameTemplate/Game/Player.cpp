@@ -86,16 +86,16 @@ void Player::Move() {
 	forward.y = 0.0f;
 	right.y = 0.0f;
 
-	//左スティックの入力量と300.0fを乗算。
-	right *= stickL.x * 300.0f;
-	forward *= stickL.y * 300.0f;
+	//左スティックの入力量と600.0fを乗算。
+	right *= stickL.x * 600.0f;
+	forward *= stickL.y * 600.0f;
 
 	//移動速度にスティックの入力量を加算する&加速処理。
 	m_moveSpeed += (right + forward) ;
-	if (g_pad[0]->IsPress(enButtonB)) {
+	/*if (g_pad[0]->IsPress(enButtonB)) {
 		m_moveSpeed.x *= 3.0f;
 		m_moveSpeed.z *= 3.0f;
-	}
+	}*/
 	//地面に付いていたら。
 	if (characterController.IsOnGround())
 	{
@@ -147,12 +147,7 @@ void Player::State() {
 		return;
 	}
 	if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f) {
-		if (g_pad[0]->IsPress(enButtonB)) {
-			m_playerState = 3;
-		}
-		else {
 			m_playerState = 2;
-		}
 	}
 
 	else {
@@ -177,7 +172,7 @@ void Player::Anime() {
 		//プレイヤーステートが2(歩き)だったら。
 	case 2:
 		//歩きアニメーションを再生する。
-		m_modelRender.PlayAnimation(m_enAnimClip_Walk);
+		m_modelRender.PlayAnimation(m_enAnimClip_Run);
 		break;
 	case 3:
 		m_modelRender.PlayAnimation(m_enAnimClip_Run);

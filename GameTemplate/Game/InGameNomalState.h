@@ -9,7 +9,10 @@ class EnemyManager;
 class PlayerUI;
 class Stage;
 class SkillButton;
+class TaskBarUI;
+
 class InGameNomalState : public IGameState {
+
 public:
 	~InGameNomalState();
     void Initialize(Game* game) override;
@@ -20,6 +23,8 @@ public:
 	//クラス固有の関数
 	void UpdateSPButton();//SPボタンの状態を更新する関数。SPボタンが押せる状態かどうかを更新する。(割合計算もこの関数内で行い描画の差異を出す。)
 	void StageClear();//ステージクリア処理。ゲームクリアフラグを立てる。
+
+	int m_CrearCount = 20; // 敵を何体倒したらクリアにするか変数
 
 private:
 	Game* m_game;//切り替えに使用(もっといい方法ある気がする...)
@@ -33,6 +38,8 @@ private:
 	Stage* stage;
 	SkillButton* m_skillButton;
 	SkyCube* m_skyCube;
+
+	TaskBarUI* m_taskBarUI;
 
 	float m_currentSP = 0.0f; // 現在の信仰値
 	float m_maxSP = 100.0f; // 最大信仰値

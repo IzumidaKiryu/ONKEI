@@ -53,6 +53,7 @@ private:
 
     SpriteRender m_cutInSprite;   // キャラクター
     SpriteRender m_cutInBg;       // 背景の帯
+	SpriteRender m_cutInFont;     // 技名のフォント
     Vector3 m_charaPos;     // キャラの座標
     Vector3 m_bgPos;        // 背景の座標
     float m_cutInAlpha = 0.0f; // 共通の透明度

@@ -39,6 +39,7 @@ public:
 	// 終了したか確認するメンバ関数
 	bool IsFinished() const { return m_isFinished; }
 private:
+	SpriteRender m_lane;//レーンのスプライト
 	SpriteRender m_judgmentiCrcule;
 	// 判定結果表示用
 	SpriteRender m_judgmentText;
