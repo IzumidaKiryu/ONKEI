@@ -268,6 +268,19 @@ void Enemy::UpdateHPBar() {
     if (hpRate < 0.0f) hpRate = 0.0f;
     m_hpBarSprite.SetScale({ hpRate, 1.0f, 1.0f });
 
+	//HPバーの色をHP割合に応じて変化させる（例: 黄色 → 赤）
+	Vector4 barColor;
+    if (hpRate > 0.5f) {
+        // HPが50%以上なら黄色
+		barColor = { 1.0f, 1.0f, 0.0f, 1.0f };
+    }
+    else {
+		// HPが50%以下なら赤
+        barColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+	}
+
+	m_hpBarSprite.SetMulColor(barColor);
+
     // 5. 反映
     m_hpBarBackSprite.Update();
     m_hpBarSprite.Update();

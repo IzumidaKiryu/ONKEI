@@ -4,14 +4,14 @@ class TaskBarUI;
 
 class NomalTaskUI : public IGameObject
 {
-	public:
+public:
 	NomalTaskUI();
 	~NomalTaskUI();
-	bool Start();
+	void Init();
 	void Update();
 	void Render(RenderContext& rc);
 
-private:
+
 	TaskBarUI* m_taskBarUI = nullptr; // タスクバーUIの参照
 
 	FontRender m_taskFont; // タスクの説明を表示するためのフォント

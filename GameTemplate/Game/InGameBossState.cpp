@@ -22,6 +22,8 @@ InGameBossState::~InGameBossState()
 	DeleteGO(m_enemyManager);
 	DeleteGO(m_playerUI);
 	DeleteGO(stage);
+	DeleteGO(m_skillButton);
+	DeleteGO(m_skyCube);
 }
 
 void InGameBossState::Initialize(Game* game)
@@ -45,6 +47,17 @@ void InGameBossState::Initialize(Game* game)
 
 	m_skillButton = NewGO<SkillButton>(0, "skillButton");
 	m_skillButton->Init("Assets/UI/skill.DDS", SKILLGAUGEMAX); // アイコンとクールタイムを指定して初期化
+
+	//空の作成。
+	m_skyCube = NewGO<SkyCube>(0, "skyCube");
+	m_skyCube->SetType(enSkyCubeType_NightToon_2);
+	m_skyCube->SetScale(1000.0f);
+
+	//空の光の強さ。
+	m_skyCube->SetLuminance(m_skyLuminance);
+
+	//空の光から影響する環境光の強さ
+	g_renderingEngine->SetAmbientByIBLTexture(m_skyCube->GetTextureFilePath(), m_skyAmbient);
 }
 
 void InGameBossState::Update(Game* game)

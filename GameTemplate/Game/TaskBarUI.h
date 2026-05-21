@@ -10,7 +10,7 @@ public:
     //メンバ関数
     TaskBarUI();
     ~TaskBarUI();
-    bool Start();
+	void Init();
     void Update();
     void Render(RenderContext& rc);
 
