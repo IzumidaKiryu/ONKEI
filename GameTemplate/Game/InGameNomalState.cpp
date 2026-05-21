@@ -26,6 +26,7 @@ InGameNomalState::~InGameNomalState() {
 	DeleteGO(stage);
 	DeleteGO(m_skillButton);
 	DeleteGO(m_taskBarUI);
+	DeleteGO(m_skyCube);
 }
 
 void InGameNomalState::Initialize(Game* game) {
@@ -52,10 +53,11 @@ void InGameNomalState::Initialize(Game* game) {
 
 	//タスクバーの作成。
 	m_taskBarUI = NewGO<TaskBarUI>(0, "taskBarUI");
+	m_taskBarUI->Init(); // タスクバーの初期化
 
 	//空の作成。
 	m_skyCube = NewGO<SkyCube>(0, "skyCube");
-	m_skyCube->SetType(enSkyCubeType_NightToon_2);
+	m_skyCube->SetType(enSkyCubeType_Night);
 	m_skyCube->SetScale(1000.0f);
 
 	//空の光の強さ。

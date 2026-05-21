@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "NomalTaskUI.h"
 #include "TaskBarUI.h"
 
@@ -21,24 +21,31 @@ NomalTaskUI::~NomalTaskUI() {
 
 }
 
-bool NomalTaskUI::Start() {
 
-	m_taskBarUI = FindGO<TaskBarUI>("TaskBarUI");
+void NomalTaskUI::Init()
+{
+	//m_taskBarUI = FindGO<TaskBarUI>("TaskBarUI");
 
 	//タスクの説明の初期化
-	//m_taskFont.SetText(L"敵をたくさん倒そう！");
-	//m_taskFont.SetPosition(TASK_FONT_POSITION);
-	//m_taskFont.SetScale(FONT_SIZE);
-	//m_taskFont.SetColor(FONT_GREEN);
+	wchar_t taskDescription[256];
+	std::wstring hff = L"タスクの説明";
+	m_taskFont.SetText(hff.c_str());
+	m_taskFont.SetPosition(TASK_FONT_POSITION);
+	m_taskFont.SetScale(FONT_SIZE);
+	m_taskFont.SetColor(FONT_GREEN);
 
+	//m_taskFont.SetText(L"敵を全て倒そう！");
+	//m_taskFont.SetPosition(Vector)
 
-	return true;
 }
 
 void NomalTaskUI::Update() {
 
+	//更新
+	m_taskFont.SetPosition(TASK_FONT_POSITION);
+
 }
 
 void NomalTaskUI::Render(RenderContext& rc) {
-	//m_taskFont.Draw(rc);
+	m_taskFont.Draw(rc);
 }
