@@ -65,6 +65,7 @@ void InGameNomalState::Initialize(Game* game) {
 
 	//空の光から影響する環境光の強さ
 	g_renderingEngine->SetAmbientByIBLTexture(m_skyCube->GetTextureFilePath(), m_skyAmbient);
+
 }
 
 void InGameNomalState::Update(Game* game) {

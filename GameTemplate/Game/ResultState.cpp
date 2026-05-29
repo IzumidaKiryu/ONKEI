@@ -11,7 +11,7 @@ ResultState::ResultState(ResultType type)
 void ResultState::Initialize(Game* game)
 {
     // 1. 背景の読み込み
-    m_BackGroundSprite.Init("Assets/sprite/1stAniver.DDS", 1920, 1080);
+    m_BackGroundSprite.Init("Assets/UI/result.DDS", 1920, 1080);
 
     // 2. 青い帯の初期化 (白い画像を青く着色して半透明にする)
     m_blueBandSprite.Init("Assets/sprite/white.DDS", 1920, 350);
@@ -21,9 +21,22 @@ void ResultState::Initialize(Game* game)
     m_targetScore = 125000.0f;
     m_targetClearTime = 262.03f; // 4分22秒03
 
+	m_resultSprite.Init("Assets/UI/resultText.DDS", 1920, 1080);
+	m_resultSprite.SetPosition(Vector3(-750.0f, 500.0f, 0.0f));
+	m_resultSprite.SetScale(Vector3(0.5f, 0.5f, 1.0f));
+	m_resultSprite.Update();
+
 	//ランク画像の初期化
-	m_rankSprite.Init("Assets/sprite/Rank_S.DDS", 400.0f, 400.0f);
-    m_rankSprite.SetPosition(Vector3(500.0f, 500.0f, 0.0f));
+	m_rankSprite.Init("Assets/UI/resultRankSS.DDS", 1920, 1080);
+    m_rankSprite.SetPosition(Vector3(650.0f, 800.0f, 0.0f));
+	m_rankSprite.SetScale(Vector3(1.0f, 1.0f, 1.0f));
+	m_rankSprite.Update();
+
+	//文字の表示
+	m_ButtonFont.SetText(L"Press A Button");
+	m_ButtonFont.SetPosition(Vector3(-200.0f, -250.0f, 0.0f));
+    m_ButtonFont.SetColor(m_fontColor);
+
 
     m_displayScore = 0.0f;
     m_displayClearTime = 0.0f;
@@ -78,12 +91,66 @@ void ResultState::Update(Game* game)
     }
 
 	m_rankSprite.Update();
+
+    FontFade();
 }
+
+void ResultState::FontFade()
+{
+    if (!m_isFontFade)
+    {
+        //フォントのフェードインの処理。
+        m_fontColor.r += 0.01f * m_timer / m_maxTitleTime;
+        m_fontColor.g += 0.01f * m_timer / m_maxTitleTime;
+        m_fontColor.b += 0.01f * m_timer / m_maxTitleTime;
+        m_fontColor.a += 0.01f * m_timer / m_maxTitleTime;
+
+        m_ButtonFont.SetColor(m_fontColor);
+
+        if (m_fontColor.a >= 1.0f)
+        {
+            m_isFontFade = true;
+            m_fontColor.r = 1.0f;
+            m_fontColor.g = 1.0f;
+            m_fontColor.b = 1.0f;
+            m_fontColor.a = 1.0f;
+
+            m_ButtonFont.SetColor(m_fontColor);
+            m_timer = 0.0f;
+
+        }
+    }
+    else if (m_isFontFade)
+    {
+        //フォントのフェードアウトの処理。
+        m_fontColor.r -= 0.01f * m_timer / m_maxTitleTime;
+        m_fontColor.g -= 0.01f * m_timer / m_maxTitleTime;
+        m_fontColor.b -= 0.01f * m_timer / m_maxTitleTime;
+        m_fontColor.a -= 0.01f * m_timer / m_maxTitleTime;
+
+        m_ButtonFont.SetColor(m_fontColor);
+
+        if (m_fontColor.a <= 0.0f)
+        {
+            m_isFontFade = false;
+            m_fontColor.r = 0.0f;
+            m_fontColor.g = 0.0f;
+            m_fontColor.b = 0.0f;
+            m_fontColor.a = 0.0f;
+
+            m_ButtonFont.SetColor(m_fontColor);
+            m_timer = 0.0f;
+        }
+    }
+    m_ButtonFont.SetColor(m_fontColor);
+}
+
 void ResultState::Render(RenderContext& rc)
 {
     m_BackGroundSprite.Draw(rc);
     m_blueBandSprite.SetPosition({ 0.0f, -50.0f, 0.0f });
     m_blueBandSprite.Draw(rc);
+	m_resultSprite.Draw(rc);
 
     // スコアは最初から出す
     wchar_t scoreStr[512];
@@ -109,7 +176,8 @@ void ResultState::Render(RenderContext& rc)
 
     // ランク表示フェーズ以降ならランク画像を描画
     if (m_currentPhase >= Phase::enRankDisplay) {
-        m_rankSprite.SetPosition({ 400.0f, 50.0f, 0.0f });
+        m_rankSprite.SetPosition({ 0.0f, 0.0f, 0.0f });
         m_rankSprite.Draw(rc);
+		m_ButtonFont.Draw(rc);
     }
 }
