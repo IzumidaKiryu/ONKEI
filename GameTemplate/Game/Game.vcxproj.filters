@@ -47,6 +47,8 @@
     <ClCompile Include="EnemyAttack.cpp" />
     <ClCompile Include="TaskBarUI.cpp" />
     <ClCompile Include="NomalTaskUI.cpp" />
+    <ClCompile Include="StageLight.cpp" />
+    <ClCompile Include="GameOver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -90,5 +92,7 @@
     <ClInclude Include="EnemyAttack.h" />
     <ClInclude Include="TaskBarUI.h" />
     <ClInclude Include="NomalTaskUI.h" />
+    <ClInclude Include="StageLight.h" />
+    <ClInclude Include="GameOver.h" />
   </ItemGroup>
 </Project>

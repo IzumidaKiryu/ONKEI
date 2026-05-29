@@ -18,6 +18,7 @@ namespace
     const Vector4 COLOR_YELLOW = { 1.0f, 1.0f, 0.0f, 1.0f }; //黄色
     const Vector4 COLOR_GREEN = { 0.0f, 1.0f, 0.0f, 1.0f }; //緑
     const Vector4 COLOR_WHITE = { 1.0f, 1.0f, 1.0f, 1.0f }; //白色
+	const Vector4 COLOR_BLACK = { 0.0f, 0.0f, 0.0f, 1.0f }; //灰色
 }
 
 TaskBarUI::TaskBarUI() {
@@ -35,7 +36,7 @@ void TaskBarUI::Init()
     // 背景バーの初期化
     m_backBar.Init("Assets/UI/bar.DDS", 300, 40);
     m_backBar.SetPosition(UI_POSITION);
-    m_backBar.SetMulColor(COLOR_WHITE);
+    m_backBar.SetMulColor(COLOR_BLACK);
     m_backBar.SetPivot(GAGE_PIVOT); // 左端を起点にする
 
     // ゲージ本体の初期化

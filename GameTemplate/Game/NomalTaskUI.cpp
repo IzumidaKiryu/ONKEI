@@ -9,7 +9,7 @@ namespace {
 	// タスクの説明のフォントサイズ
 	const float FONT_SIZE = 1.0f;
 	// タスクの説明の色
-	const Vector4 FONT_GREEN = { 0.0f, 1.0f, 0.0f, 1.0f }; // 緑色
+	const Vector4 FONT_GREEN = { 1.0f, 1.0f, 0.0f, 1.0f }; // 緑色
 
 }
 
@@ -28,7 +28,7 @@ void NomalTaskUI::Init()
 
 	//タスクの説明の初期化
 	wchar_t taskDescription[256];
-	std::wstring hff = L"タスクの説明";
+	std::wstring hff = L"敵をたくさん倒そう！";
 	m_taskFont.SetText(hff.c_str());
 	m_taskFont.SetPosition(TASK_FONT_POSITION);
 	m_taskFont.SetScale(FONT_SIZE);

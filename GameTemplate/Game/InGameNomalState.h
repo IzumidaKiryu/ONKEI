@@ -44,8 +44,8 @@ private:
 	float m_currentSP = 0.0f; // 現在の信仰値
 	float m_maxSP = 100.0f; // 最大信仰値
 
-	float m_skyLuminance = 0.5f;//空の明るさ。
-	float m_skyAmbient = 0.5f;	//空の明るさの影響を受ける環境光。
+	float m_skyLuminance = 0.01f;//空の明るさ。
+	float m_skyAmbient = 0.01f;	//空の明るさの影響を受ける環境光。
 
 	bool m_isGameOver = false; // ゲームオーバーフラグ
 	bool m_isGameClear = false; // ゲームクリアフラグ

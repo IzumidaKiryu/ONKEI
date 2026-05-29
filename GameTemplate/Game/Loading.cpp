@@ -27,14 +27,14 @@ void Loading::Init(std::function<void()> nextSceneCreator,
     }
     m_isAutoDelete = isAutoDelete; // ★保存！
 
-    m_diamondWipe.Init("Assets/sprite/kokuban.DDS", 1920, 1080);//画像差し替え必須
+    m_diamondWipe.Init("Assets/UI/loading.DDS", 1920, 1080);//画像差し替え必須
     m_diamondWipe.SetPosition(Vector3::Zero);
 
     // UI初期化
-    m_loadingCircle.Init(Vector3(700.0f, -350.0f, 0.0f));
+    m_loadingCircle.Init(Vector3(800.0f, -380.0f, 0.0f));
 
     m_text.Init("Assets/sprite/LoadingText.DDS", 300, 60);//画像差し替え必須
-    m_text.SetPosition(Vector3(450.0f, -350.0f, 0.0f));
+    m_text.SetPosition(Vector3(570.0f, -405.0f, 0.0f));
 
     // ★ドットの初期化と配置
     float dotSize = 7.0f;  // ドットのサイズ（画像のサイズに合わせる）
@@ -168,7 +168,7 @@ void Loading::Render(RenderContext& rc)
 
     if (m_transitionVal > 0.0f) {
         m_loadingCircle.Draw(rc);
-        m_text.Draw(rc);
+        //m_text.Draw(rc);
         // ★ドットの描画を追加
         for (int i = 0; i < 3; i++) {
             m_dots[i].Draw(rc);
