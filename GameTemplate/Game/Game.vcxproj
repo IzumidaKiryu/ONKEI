@@ -226,12 +226,12 @@
   <ItemGroup>
     <ClCompile Include="BarnDamage.cpp" />
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="ClearUI.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyAttack.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameCamera.cpp" />
-    <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="HItEffect.cpp" />
     <ClCompile Include="InGameBossState.cpp" />
     <ClCompile Include="InGameNomalState.cpp" />
@@ -250,6 +250,7 @@
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="StageLight.cpp" />
+    <ClCompile Include="StartUI.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -263,12 +264,12 @@
     <ClInclude Include="BarnDamage.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Chart.h" />
+    <ClInclude Include="ClearUI.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyAttack.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameCamera.h" />
-    <ClInclude Include="GameOver.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="HitEffect.h" />
     <ClInclude Include="InGameBossState.h" />
@@ -287,6 +288,7 @@
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageLight.h" />
+    <ClInclude Include="StartUI.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
     <ClInclude Include="TaskBarUI.h" />

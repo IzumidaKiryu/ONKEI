@@ -11,7 +11,7 @@ void HitEffect::Init(Vector3 pos)
 {
     for (int i = 0; i < PARTICLE_NUM; i++) {
         // 画像読み込み (手持ちのキラキラ画像や、dot.DDSでもOK)
-        m_particles[i].sprite.Init("Assets/sprite/hosi1.DDS", 50.0f, 50.0f);
+        m_particles[i].sprite.Init("Assets/UI/longNote.DDS", 50.0f, 50.0f);
 
         // 発生位置（ノーツを叩いた場所）
         m_particles[i].sprite.SetPosition(pos);

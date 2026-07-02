@@ -2,84 +2,13 @@
   "songs": [
     {
       "id": 1,
-      "title": "僕らのLIVE 君とのLIFE",
-      "artist": "'s",
-      "jacket": "Assets/jacket/Borara.DDS",
-      "select":"Assets/jacket/BoraraSelec.DDS",
-      "audio": "Assets/sound/song1.wav",
-      "json": "Assets/Json/Borara.json"
-    },
-    {
-      "id": 2,
-      "title": "青空Jumping Heart",
-      "artist": "Aqours",
-      "jacket": "Assets/jacket/Aojan.DDS",
-      "select":"Assets/jacket/AojanSelec.DDS",
-      "audio": "Assets/sound/song2.wav",
-      "json": "Assets/Json/AozoraJumpingHeart.json"
-    },
-    {
-      "id": 3,
-      "title": "CHASE!",
-      "artist": "優木せつ菜",
-      "jacket": "Assets/jacket/chase.DDS",
-      "select":"Assets/jacket/chaseSelec.DDS",
-      "audio": "Assets/sound/song3.wav",
-      "json": "Assets/Json/notes.json"
-    },
-    {
-      "id": 1,
-      "title": "僕らのLIVE 君とのLIFE",
-      "artist": "'s",
-      "jacket": "Assets/jacket/Borara.DDS",
-      "select":"Assets/jacket/BoraraSelec.DDS",
-      "audio": "Assets/sound/song1.wav",
-      "json": "Assets/Json/Borara.json"
-    },
-    {
-      "id": 2,
-      "title": "青空Jumping Heart",
-      "artist": "Aqours",
-      "jacket": "Assets/jacket/Aojan.DDS",
-      "select":"Assets/jacket/AojanSelec.DDS",
-      "audio": "Assets/sound/song2.wav",
-      "json": "Assets/Json/AozoraJumpingHeart.json"
-    },
-    {
-      "id": 3,
-      "title": "CHASE!",
-      "artist": "優木せつ菜",
-      "jacket": "Assets/jacket/chase.DDS",
-      "select":"Assets/jacket/chaseSelec.DDS",
-      "audio": "Assets/sound/song3.wav",
-      "json": "Assets/Json/notes.json"
-    },
-    {
-      "id": 1,
-      "title": "僕らのLIVE 君とのLIFE",
-      "artist": "'s",
-      "jacket": "Assets/jacket/Borara.DDS",
-      "select":"Assets/jacket/BoraraSelec.DDS",
-      "audio": "Assets/sound/song1.wav",
-      "json": "Assets/Json/Borara.json"
-    },
-    {
-      "id": 2,
-      "title": "青空Jumping Heart",
-      "artist": "Aqours",
-      "jacket": "Assets/jacket/Aojan.DDS",
-      "select":"Assets/jacket/AojanSelec.DDS",
-      "audio": "Assets/sound/song2.wav",
-      "json": "Assets/Json/AozoraJumpingHeart.json"
-    },
-    {
-      "id": 3,
-      "title": "CHASE!",
-      "artist": "優木せつ菜",
-      "jacket": "Assets/jacket/chase.DDS",
-      "select":"Assets/jacket/chaseSelec.DDS",
-      "audio": "Assets/sound/song3.wav",
-      "json": "Assets/Json/notes.json"
+      "title": "",
+      "artist": "",
+      "jacket": "",
+      "select":"",
+      "audio": "",
+      "json": "Assets/Json/ONKEI.json"
     }
+  
   ]
 }

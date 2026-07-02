@@ -17,6 +17,12 @@ void EnemyManager::Init() {
 }
 
 void EnemyManager::SpawnEnemies() {
+
+  //エネミーを20体スポーンさせるまで、1秒ごとにスポーンさせる
+  if (m_spawnEnemyCount >= m_maxEnemyCount) {
+		return; // 既に最大数スポーンしているので、これ以上スポーンさせない
+  }
+    
   // 1. タイマーを進める
   m_spawnTimer += g_gameTime->GetFrameDeltaTime();
 
@@ -48,6 +54,8 @@ void EnemyManager::SpawnEnemies() {
 
           // リストに追加
           m_enemies.push_back(enemy);
+
+		  m_spawnEnemyCount++;
       }
   }
 }

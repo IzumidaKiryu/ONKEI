@@ -5,7 +5,7 @@
 namespace {
 
 	// タスクの説明の表示位置
-	const Vector3 TASK_FONT_POSITION = { 400.0f, 400.0f, 0.0f }; // タスクバーの上あたり
+	const Vector3 TASK_FONT_POSITION = { 350.0f, 400.0f, 0.0f }; // タスクバーの上あたり
 	// タスクの説明のフォントサイズ
 	const float FONT_SIZE = 1.0f;
 	// タスクの説明の色

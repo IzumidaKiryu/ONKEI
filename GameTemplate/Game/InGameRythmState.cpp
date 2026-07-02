@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "InGameRythmState.h"
 #include "Game.h"
 #include "RythmGame.h"
@@ -45,7 +45,7 @@ void InGameRythmState::Initialize(Game* game)
         std::random_device rd;
         std::mt19937 gen(rd());
         // 0 から (曲数 - 1) までの範囲でランダムな数を作る
-        std::uniform_int_distribution<> dis(0, static_cast<int>((m_songList.size() - 1)%3));
+        std::uniform_int_distribution<> dis(0, static_cast<int>((m_songList.size() - 1)));
 
         int randomIndex = dis(gen);
 
@@ -69,14 +69,36 @@ void InGameRythmState::Initialize(Game* game)
 
     m_cutInAlpha = 0.0f;
 
-	// 五線譜の初期化
-    m_staffSprite.Init("Assets/sprite/SPSprite.DDS", 1920.0f, 1080.0f);//変える
+	// スタートテキストの初期化
+    m_staffSprite.Init("Assets/UI/gameStartFont.DDS", 1920.0f, 1080.0f);//変える
     m_staffPos = { 960.0f, 540.0f, 0.0f }; // 画面中央
     m_staffScale = { 0.1f, 0.1f, 1.0f }; // 最初は小さく
 	m_staffAlpha = 0.0f; // 最初は透明
 
+    // 五線譜の初期化
     m_screen_Graw.Init("Assets/sprite/Screen_Graw.DDS", 1920.0f, 1080.0f,AlphaBlendMode_Add);
-    m_screen_Graw.SetPosition({ 0, 0, 0 });         // 画面中央に置く（全体を覆う）
+    m_screen_Graw.SetPosition({ 0, 0, 0 });// 画面中央に置く（全体を覆う）
+
+	//ボタンUIの初期化
+	m_buttonSprite.Init("Assets/UI/buttonA.DDS", 1920.0f, 1080.0f);
+	m_buttonSprite.SetPosition({ 80.0f, -250.0f, 0.0f });
+    m_buttonSprite.SetScale({ 0.2f, 0.2f, 1.0f });
+	m_buttonSprite.Update();
+
+    //タップ説明用のテキスト
+    wchar_t taskDescription[256];
+    std::wstring hff = L"タイミングよく　　 を押そう！";
+    m_font.SetText(hff.c_str());
+    m_font.SetPosition({-280.0f,-250.0f,0.0f});
+    m_font.SetScale(1.0f);
+    m_font.SetColor({1.0f,1.0f,1.0f,1.0f});
+
+	// フィニッシュテキストの初期化
+	m_finishSprite.Init("Assets/UI/gameFinishFont.DDS", 1920.0f, 1080.0f);
+	m_finishPos = { 960.0f, 540.0f, 0.0f }; // 画面中央
+	m_finishScale = { 0.1f, 0.1f, 1.0f }; // 最初は小さく
+	m_finishAlpha = 0.0f; // 最初は透明
+
 	m_player = FindGO<Player>("player");
 }
 
@@ -135,7 +157,7 @@ void InGameRythmState::Render(RenderContext& rc)
         DrawGameplay(rc);
         break;
     case RythmPhase::End:
-        // 何も描画しないかフェード
+		DrawFinish(rc);
         break;
     }
 }
@@ -259,15 +281,50 @@ void InGameRythmState::UpdateGameplay()
 
 void InGameRythmState::FinishRythm()
 {
-    
+    //また今度やろう、ちょっと変
+    float deltaTime = g_gameTime->GetFrameDeltaTime();
+
+    // 0.0 ～ 0.8 の時間を 0.0 ～ 1.0 の割合（t）に変換
+    float t = m_timer / 0.8f;
+    if (t > 1.0f) t = 1.0f;
+
+    // --- イージング処理 (Ease Out Expo的な動き) ---
+    // tが1に近づくほど、増え方がゆっくりになる
+    float easeOut = 1.0f - pow(2.0f, -10.0f * t);
+
+    // スケール：0.1 から 1.0 へ
+    float currentScale = 0.1f + (0.9f * easeOut);
+    m_finishScale = { currentScale, currentScale, 1.0f };
+
+    // 透明度：0.0 から 1.0 へ
+    m_finishAlpha = easeOut;
+
+    // 座標：奥（中心）から、本来の表示位置（例：Y=0）へ
+    // 遠近感を出すために、少し上から降りてくるようにするとGOOD
+    m_finishPos.x = 0.0f;
+    m_finishPos.y = 200.0f * (1.0f - easeOut); // 200から0へ降りてくる
+    m_finishPos.z = 0.0f;
+
+    // スプライトに反映
+    m_finishSprite.SetPosition(m_finishPos);
+    m_finishSprite.SetScale(m_finishScale);
+    m_finishSprite.SetMulColor({ 1, 1, 1, m_finishAlpha });
+    m_finishSprite.Update();
+
+    if (m_timer > 2.0f)
+    {
+        m_timer = 0.0f;
         // InGameNormalStateに戻す or ResultStateへ
         m_game->PopState(); // リズムゲーム終了後、通常のゲームに戻る
+    }
+        
 
  
 }
 
 void InGameRythmState::DrawCutIn(RenderContext& rc)
 {
+	
     // カットインスプライト描画
     // 先に背景（帯）を描画
     m_cutInBg.Draw(rc);
@@ -283,11 +340,23 @@ void InGameRythmState::DrawStaffZoom(RenderContext& rc)
 {
     // 五線譜拡大アニメ描画
     m_staffSprite.Draw(rc);
+   
 }
 
 void InGameRythmState::DrawGameplay(RenderContext& rc)
 {
     // ノーツ・判定UI描画
+     //ボタンUIの描画
+    m_buttonSprite.Draw(rc);
+    //説明用テキストの描画
+    m_font.Draw(rc);
+    
 	// リズムゲームの描画を呼び出す
 	//m_rythmGame->Render(rc);
+}
+
+void InGameRythmState::DrawFinish(RenderContext& rc)
+{
+	// 終了エフェクト描画
+	m_finishSprite.Draw(rc);
 }

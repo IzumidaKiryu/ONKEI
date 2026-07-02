@@ -1,8 +1,7 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "TaskBarUI.h"
 #include "InGameNomalState.h"
 #include "EnemyManager.h"
-#include "NomalTaskUI.h"
 
 namespace
 {
@@ -19,6 +18,17 @@ namespace
     const Vector4 COLOR_GREEN = { 0.0f, 1.0f, 0.0f, 1.0f }; //緑
     const Vector4 COLOR_WHITE = { 1.0f, 1.0f, 1.0f, 1.0f }; //白色
 	const Vector4 COLOR_BLACK = { 0.0f, 0.0f, 0.0f, 1.0f }; //灰色
+
+    // タスクの説明の表示位置
+    const Vector3 TASK_FONT_POSITION = { 350.0f, 400.0f, 0.0f }; // タスクバーの上あたり
+    // タスクの説明のフォントサイズ
+    const float FONT_SIZE = 1.0f;
+
+    // 進捗：の表示位置
+    const Vector3 KILL_FONT_POSITION = { 300.0f,325.0f,0.0f };
+    //　進捗：のフォントサイズ
+    const float KILL_SIZE = 1.0f;
+    
 }
 
 TaskBarUI::TaskBarUI() {
@@ -27,7 +37,6 @@ TaskBarUI::TaskBarUI() {
 
 TaskBarUI::~TaskBarUI() {
 
-    DeleteGO(m_taskUI);
 }
 
 
@@ -50,9 +59,21 @@ void TaskBarUI::Init()
     m_partition.SetPosition(PARTITION_POSITION);
     m_partition.SetMulColor(COLOR_WHITE);
 
-    // タスク用テキストの生成
-    m_taskUI = NewGO<NomalTaskUI>(0, "nomalTaskUI");
-    m_taskUI->Init();
+    //タスクの説明の初期化
+    wchar_t taskDescription[256];
+    std::wstring hff = L"敵をたくさん倒そう！";
+    m_taskFont.SetText(hff.c_str());
+    m_taskFont.SetPosition(TASK_FONT_POSITION);
+    m_taskFont.SetScale(FONT_SIZE);
+    m_taskFont.SetColor(COLOR_GREEN);
+
+    //進捗：の初期化
+    wchar_t killDescription[256];
+    std::wstring kill = L"進捗";
+    m_killFont.SetText(kill.c_str());
+    m_killFont.SetPosition(KILL_FONT_POSITION);
+    m_killFont.SetScale(KILL_SIZE);
+    m_killFont.SetColor(COLOR_WHITE);
 
     // 参照を取得
     m_enemyManager = FindGO<EnemyManager>("EnemyManager");
@@ -98,5 +119,7 @@ void TaskBarUI::Render(RenderContext& rc)
     m_backBar.Draw(rc);
     m_fillBar.Draw(rc);
 	m_partition.Draw(rc);
+    m_taskFont.Draw(rc);
+    m_killFont.Draw(rc);
 	/*m_missionKill.Draw(rc);*/
 }

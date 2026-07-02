@@ -40,6 +40,9 @@ private:
     // 配置データをリスト化して持つ
     std::vector<EnemySpawnData> m_spawnList;
     std::vector<Enemy*> m_enemies; // 生成したエネミーを覚えておくリスト
+
+	int m_spawnEnemyCount = 0; // スポーンした敵の数をカウントする変数
+	int m_maxEnemyCount = 20; // スポーンする敵の最大数
     float m_spawnTimer = 0.0f;
     
 	bool m_BossDeathFlag = false; // ボスが死んだかどうかのフラグ

@@ -48,7 +48,8 @@
     <ClCompile Include="TaskBarUI.cpp" />
     <ClCompile Include="NomalTaskUI.cpp" />
     <ClCompile Include="StageLight.cpp" />
-    <ClCompile Include="GameOver.cpp" />
+    <ClCompile Include="StartUI.cpp" />
+    <ClCompile Include="ClearUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -93,6 +94,7 @@
     <ClInclude Include="TaskBarUI.h" />
     <ClInclude Include="NomalTaskUI.h" />
     <ClInclude Include="StageLight.h" />
-    <ClInclude Include="GameOver.h" />
+    <ClInclude Include="StartUI.h" />
+    <ClInclude Include="ClearUI.h" />
   </ItemGroup>
 </Project>
