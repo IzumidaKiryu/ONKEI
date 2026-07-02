@@ -20,8 +20,9 @@ void TitleState::Initialize(Game* game) {
 
 void TitleState::Update(Game* game) {
     // Aボタンでゲーム本編へ
-    if (g_pad[0]->IsTrigger(enButtonA)) {
+    if (g_pad[0]->IsTrigger(enButtonA)&&m_isChangeFlag==false) {
         m_game->ChangeState(new InGameNomalState());
+		m_isChangeFlag = true;
     }
 	//タイマーを加算。
 	m_timer += g_gameTime->GetFrameDeltaTime();

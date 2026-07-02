@@ -103,7 +103,7 @@ void Player::Move() {
 		m_moveSpeed.y = 0.0f;
 		m_jumpState = 0;
 		//Aボタンが押されたら。
-		if (g_pad[0]->IsTrigger(enButtonA))
+		if (g_pad[0]->IsTrigger(enButtonSelect))
 		{
 			//ジャンプさせる。
 			m_moveSpeed.y += 200.0f;
@@ -113,7 +113,7 @@ void Player::Move() {
 	else
 	{
 		//Aボタンが押されたら。
-		if (g_pad[0]->IsTrigger(enButtonA) && m_jumpState == 0)
+		if (g_pad[0]->IsTrigger(enButtonSelect) && m_jumpState == 0)
 		{
 			//ジャンプさせる。
 			m_moveSpeed.y += 200.0f;
@@ -183,7 +183,7 @@ void Player::Anime() {
 
 void Player::Attack() {
 	// 例として SPACEボタン(enButtonSelect) で攻撃
-	if (g_pad[0]->IsTrigger(enButtonSelect)) {
+	if (g_pad[0]->IsTrigger(enButtonA)) {
 		// すでに攻撃オブジェクトが存在しないかチェック（連打制限）
 		// もし連打させたい場合はこのチェックを外します
 		if (m_plAtk == nullptr) {

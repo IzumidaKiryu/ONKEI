@@ -64,7 +64,7 @@ private:
 	int m_totalScore = 0;  // このライブ中に獲得した総スコア
 	int m_displayScore = 0;    // 画面表示用のスコア（徐々に増える）
 	int m_targetScore = 7122000; // 目標スコア(ToDo.あとで曲ごとに変更できるようにしてね)
-	int m_charaBaseScore = 100;//基礎スコア
+	int m_charaBaseScore = 1000;//基礎スコア
 
 	// 判定関連
 	int m_perfectCount = 0;

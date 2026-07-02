@@ -320,15 +320,15 @@ void RythmGame::Render(RenderContext& rc) {
 
 	// スコア・コンボの描画
 	wchar_t scoreStr[512];
-	swprintf_s(scoreStr, 512, L"Score: %09d / %09d", m_displayScore, m_targetScore);
+	swprintf_s(scoreStr, 512, L"Score: %09d", m_displayScore);
 	m_totalScoreFont.SetText(scoreStr);
-	m_totalScoreFont.SetPosition(Vector3(280.0f, -440.0f, 0.0f));
+	m_totalScoreFont.SetPosition(Vector3(250.0f, 300.0f, 0.0f));
 	m_totalScoreFont.Draw(rc);
 
 	wchar_t comboStr[256];
 	swprintf_s(comboStr, 256, L"%d COMBO", m_comboCount);
 	m_comboFont.SetText(comboStr);
-	m_comboFont.SetPosition(Vector3(420, 420, 0.0));
+	m_comboFont.SetPosition(Vector3(-500.0f, 300.0f, 0.0f));
 	m_comboFont.Draw(rc);
 }
 

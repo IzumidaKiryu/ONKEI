@@ -5,10 +5,14 @@
 #include "GameCamera.h"
 #include "EnemyManager.h"
 #include "PlayerUI.h"
+#include "StartUI.h"
+#include "ClearUI.h"
 #include "ResultState.h"
+#include "InGameNomalState.h"
 #include "InGameRythmState.h"
 #include "Stage.h"
 #include "SkillButton.h"
+
 //boss戦のインゲームステート
 namespace {
 	const float SKILLGAUGEMAX = 100.0f; // スキルゲージの最大値
@@ -21,6 +25,7 @@ InGameBossState::~InGameBossState()
 	DeleteGO(m_camera);
 	DeleteGO(m_enemyManager);
 	DeleteGO(m_playerUI);
+	DeleteGO(m_clearUI);
 	DeleteGO(stage);
 	DeleteGO(m_skillButton);
 	DeleteGO(m_skyCube);
@@ -58,42 +63,104 @@ void InGameBossState::Initialize(Game* game)
 
 	//空の光から影響する環境光の強さ
 	//g_renderingEngine->SetAmbientByIBLTexture(m_skyCube->GetTextureFilePath(), m_skyAmbient);
+
 }
 
 void InGameBossState::Update(Game* game)
 {
-	StageClear();
-	//ゲームオーバー、ゲームクリアのフラグが立っているかを確認して、立っていたらそれぞれのステートに遷移する
-	if (m_isGameOver == true) {
-		m_enemyManager->ClearAllEnemies();
-		m_game->ChangeState(new ResultState(ResultState::ResultType::enGameOver));
-		m_isGameOver = false; // フラグをリセットしておく（次のプレイでゲームオーバーになったときに正しく遷移するように）
-		return;
-	}
-	else if (m_isGameClear == true) {
-		m_enemyManager->ClearAllEnemies();
-		//Boss戦のステートに遷移する予定
-		m_game->ChangeState(new ResultState(ResultState::ResultType::enClear));
-		m_isGameClear = false; // フラグをリセットしておく（次のプレイでゲームクリアになったときに正しく遷移するように）
-		return;
+	//ゲーム開始UIの生成
+	StartFontFade();
+
+	//ゲーム開始のフラグが立ったら
+	if (m_isGameStart) {
+
+		StageClear();
+
+		//ゲームオーバー、ゲームクリアのフラグが立っているかを確認して、立っていたらそれぞれのステートに遷移する
+		if (m_isGameOver == true) {
+			m_enemyManager->ClearAllEnemies();
+			m_game->m_scoreTimer = m_game->m_gameTimer;//プレイ時間を記録
+			m_game->ChangeState(new ResultState(ResultState::ResultType::enGameOver));
+			m_isGameOver = false; // フラグをリセットしておく（次のプレイでゲームオーバーになったときに正しく遷移するように）
+			return;
+		}
+		else if (m_isGameClear == true) {
+			m_enemyManager->ClearAllEnemies();
+
+			// 1. まだ生成されていなければ生成する
+			if (!m_isClearUI) {
+				m_clearUI = NewGO<ClearUI>(0, "clearUI");
+				m_clearUI->Init();
+				m_game->m_scoreTimer = m_game->m_gameTimer;//プレイ時間を記録
+				m_isClearUI = true;
+			}
+			// 2. 生成済みなら、生成処理とは別にタイマーをチェックする
+			else {
+				// m_clearUI はすでに存在するので安全
+				if (m_clearUI->m_clearUITimer >= 3.0f) {
+					m_game->ChangeState(new ResultState(ResultState::ResultType::enClear));
+					m_isGameClear = false;
+					return; // 遷移したら即終了
+				}
+			}
+		}
+		//判定が何もないなら
+		else {
+			//スコアタイマーを加算
+			m_game->m_gameTimer += g_gameTime->GetFrameDeltaTime();
+		}
+
+		//スキルゲージが100溜まったら
+		if (m_player->m_playerSkillGauge >= SKILLGAUGEMAX) {
+			m_isSPButtonIsReady = true; // SPボタンが押せる状態にする
+		}
+		else {
+			m_isSPButtonIsReady = false; // SPボタンが押せない状態にする
+		}
+		//SPボタンが押せる状態でLB1が押されたらSPボタンを発動させる
+		if (m_isSPButtonIsReady && g_pad[0]->IsTrigger(enButtonB)) {//ボタンは変える！
+			//SPボタンの発動処理をここに書く
+			m_skillButton->UseSkill();//まず、スキルボタンクラス側の発動関数を呼ぶ。
+			m_player->m_playerSkillGauge = 0;//プレイヤー側のスキルゲージを0にする
+			m_game->PushState(new InGameRythmState());//リズムゲームのステートをPushする。これでリズムゲームのステートが表に出る。
+		}
+
+		m_skillButton->Update((float)m_player->m_playerSkillGauge);//スキルボタンにはプレイヤーのスキルゲージを渡す。
 	}
 
-	//スキルゲージが100溜まったら
-	if (m_player->m_playerSkillGauge >= SKILLGAUGEMAX) {
-		m_isSPButtonIsReady = true; // SPボタンが押せる状態にする
-	}
-	else {
-		m_isSPButtonIsReady = false; // SPボタンが押せない状態にする
-	}
-	//SPボタンが押せる状態でLB1が押されたらSPボタンを発動させる
-	if (m_isSPButtonIsReady && g_pad[0]->IsTrigger(enButtonDown)) {//ボタンは変える！
-		//SPボタンの発動処理をここに書く
-		m_skillButton->UseSkill();//まず、スキルボタンクラス側の発動関数を呼ぶ。
-		m_player->m_playerSkillGauge = 0;//プレイヤー側のスキルゲージを0にする
-		m_game->PushState(new InGameRythmState());//リズムゲームのステートをPushする。これでリズムゲームのステートが表に出る。
+	
+}
+
+void InGameBossState::StartFontFade()
+{
+	if (m_isGameStart) return;
+
+	if (!m_isStartUI) {
+		m_startUI = NewGO<StartUI>(0, "startUI");
+		m_startUI->Init();
+		m_isStartUI = true;
+		m_startUITimer = 3.0f;
+		m_startUI->m_currentCount = 3; // ★State側でカウントを保持しておく
+		m_startUI->SetCount(m_startUI->m_currentCount); // 初期値をセット
+		return; // ★生成したフレームはここで抜ける（Initした直後のフレームで書き換えない）
 	}
 
-	m_skillButton->Update((float)m_player->m_playerSkillGauge);//スキルボタンにはプレイヤーのスキルゲージを渡す。
+
+	m_startUITimer -= g_gameTime->GetFrameDeltaTime();
+	int nextCount = (int)ceil(m_startUITimer);
+
+	// 数値が変化した時だけ SetCount を呼ぶ
+	if (nextCount != m_startUI->m_currentCount) {
+		m_startUI->m_currentCount = nextCount;
+		if (m_startUI) m_startUI->SetCount(m_startUI->m_currentCount);
+	}
+
+	if (m_startUITimer <= -0.5f) {
+		m_isGameStart = true;
+		DeleteGO(m_startUI);
+		m_startUI = nullptr; // ★削除したら必ずポインタをnullにする！
+	}
+
 }
 
 void InGameBossState::Render(RenderContext& rc)
@@ -126,4 +193,14 @@ void InGameBossState::StageClear()
 		m_isChangeIsReady = true; // ステート遷移が発動したことを示すフラグを立てる
 	}
 
+}
+
+void InGameBossState::GameOver()
+{
+	//プレイヤーのHPが0になったらゲームオーバーにする。
+	if (m_player->m_playerHP <= 0 && m_isChangeIsReady == false) {
+		//ゲームオーバーの処理を行う。
+		m_isGameOver = true;
+		m_isChangeIsReady = true; // ステート遷移が発動したことを示すフラグを立てる
+	}
 }

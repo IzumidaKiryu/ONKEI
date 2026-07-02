@@ -10,6 +10,9 @@ ResultState::ResultState(ResultType type)
 
 void ResultState::Initialize(Game* game)
 {
+	// ゲームクラスのポインタを保持
+	m_game = game;
+
     // 1. 背景の読み込み
     m_BackGroundSprite.Init("Assets/UI/result.DDS", 1920, 1080);
 
@@ -19,18 +22,16 @@ void ResultState::Initialize(Game* game)
 
     // 3. スコアとタイムの目標値を設定 (本来は前ステージのマネージャーから取得)
     m_targetScore = 125000.0f;
-    m_targetClearTime = 262.03f; // 4分22秒03
+	m_targetClearTime = m_game->m_scoreTimer; // 前ステージで記録したプレイ時間を使用
 
 	m_resultSprite.Init("Assets/UI/resultText.DDS", 1920, 1080);
 	m_resultSprite.SetPosition(Vector3(-750.0f, 500.0f, 0.0f));
 	m_resultSprite.SetScale(Vector3(0.5f, 0.5f, 1.0f));
 	m_resultSprite.Update();
 
-	//ランク画像の初期化
-	m_rankSprite.Init("Assets/UI/resultRankSS.DDS", 1920, 1080);
+    //※あらかじめランクの画像を初期化
+    m_rankSprite.Init("Assets/UI/resultRankA.DDS", 1920, 1080);
     m_rankSprite.SetPosition(Vector3(650.0f, 800.0f, 0.0f));
-	m_rankSprite.SetScale(Vector3(1.0f, 1.0f, 1.0f));
-	m_rankSprite.Update();
 
 	//文字の表示
 	m_ButtonFont.SetText(L"Press A Button");
@@ -39,8 +40,9 @@ void ResultState::Initialize(Game* game)
 
 
     m_displayScore = 0.0f;
-    m_displayClearTime = 0.0f;
+    m_displayClearTime = 0.0f; // 前ステージで記録したプレイ時間を使用
     m_isCounting = true;
+
 }
 
 void ResultState::Update(Game* game)
@@ -66,6 +68,7 @@ void ResultState::Update(Game* game)
             m_displayClearTime += (m_targetClearTime - m_displayClearTime) * 0.1f + 0.05f;
             if (m_displayClearTime >= m_targetClearTime) {
                 m_displayClearTime = m_targetClearTime;
+                ScoreRank(); // ここでランク判定し、正しい画像に Init される
                 // ここでタイム確定音！
                 m_currentPhase = Phase::enRankDisplay; // 次の演出へ
             }
@@ -74,6 +77,11 @@ void ResultState::Update(Game* game)
 
     case Phase::enRankDisplay:
         // --- 3. ランク表示 ---
+        if (!m_isRankSoundPlayed) {
+            // ★演出が終わった瞬間にスコアが確定しているので、ここで再判定＆差し替え！
+            ScoreRank();
+            m_isRankSoundPlayed = true;
+        }
         // ここでは少しの間（ウェイト）を置いたり、
         // ランク画像を「ドォン！」と出す準備をします。
         // とりあえず今回は即座に入力待ちへ
@@ -82,10 +90,10 @@ void ResultState::Update(Game* game)
 
     case Phase::enWaitInput:
         // --- 4. 入力待ち ---
-        if (g_pad[0]->IsTrigger(enButtonA)) {
+        if (g_pad[0]->IsTrigger(enButtonA) && m_isChangeFlag == false) {
             // 次のシーンへ
             m_game->ChangeState(new TitleState());
-
+            m_isChangeFlag = true;
         }
         break;
     }
@@ -170,7 +178,7 @@ void ResultState::Render(RenderContext& rc)
         swprintf_s(timeStr, L"CLEAR TIME     %02d : %02d : %02d", min, sec, milli);
 
         m_clearTimeFont.SetText(timeStr);
-        m_clearTimeFont.SetPosition({ -650.0f, -120.0f, 0.0f });
+        m_clearTimeFont.SetPosition({ -650.0f, -80.0f, 0.0f });
         m_clearTimeFont.Draw(rc);
     }
 
@@ -180,4 +188,40 @@ void ResultState::Render(RenderContext& rc)
         m_rankSprite.Draw(rc);
 		m_ButtonFont.Draw(rc);
     }
+}
+
+void ResultState::ScoreRank()
+{
+    // 判定ロジック
+    if (m_resultType == ResultType::enGameOver) {
+        m_rank = Rank::enA;
+    }
+    else if (m_displayScore >= 100000){ 
+        m_rank = Rank::enS_Plus;
+    }
+    else if (m_displayScore >= 50000) { 
+        m_rank = Rank::enS;
+    }
+    else { 
+        m_rank = Rank::enA;
+    }
+
+    // スプライトのパスだけを決める
+    const char* path = "Assets/UI/resultRankA.DDS";
+    switch (m_rank)
+    {
+    case Rank::enS_Plus: 
+        path = "Assets/UI/resultRankSS.DDS"; 
+        break;
+    case Rank::enS:      
+        path = "Assets/UI/resultRankS.DDS";  
+        break;
+    case Rank::enA:      
+        path = "Assets/UI/resultRankA.DDS";  
+        break;
+    }
+
+    // 既に Init 済みでも、再度 Init すれば画像が差し替わる！
+    m_rankSprite.Init(path, 1920, 1080);
+    m_rankSprite.SetPosition(Vector3(650.0f, 800.0f, 0.0f));
 }

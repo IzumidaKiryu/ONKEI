@@ -25,6 +25,7 @@ public:
         m_targetScore = (float)score;
         m_targetClearTime = time;
     }
+	void ScoreRank(); //スコアに応じてランクを決定する関数
 private:
 	Game* m_game = nullptr;              // ゲームクラスへのポインタ
     ResultType m_resultType = ResultType::enNum;
@@ -62,11 +63,22 @@ private:
         enRankDisplay,   // ランク表示
         enWaitInput      // 入力待ち
     };
+
+	//ランク表示のための列挙型
+	enum Rank {
+		enS_Plus,//S+ランク
+		enS,//Sランク
+		enA,//Aランク
+		enNum
+	};
+
+	int m_rank = 0; //ランクを格納する変数
+
     Phase m_currentPhase = Phase::enScoreCount;
 
     SpriteRender m_rankSprite; // ランク用のスプライト
     bool m_isRankSoundPlayed = false; // ランク表示音を一度だけ鳴らす用
-
+    bool m_isChangeFlag = false;//ステートの変更が行われたかどうか（1回のみに限定するため）
     SpriteRender m_resultSprite;
 	SpriteRender m_starSprite;
 };

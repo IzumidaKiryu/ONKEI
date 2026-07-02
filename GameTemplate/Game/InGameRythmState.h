@@ -38,6 +38,7 @@ public:
 	void DrawCutIn(RenderContext& rc);//カットインの描画処理
 	void DrawStaffZoom(RenderContext& rc);//五線譜拡大の描画処理
 	void DrawGameplay(RenderContext& rc);//リズムゲームの描画処理
+	void DrawFinish(RenderContext& rc);//終了処理の描画処理
     SongData LoadSong(const std::string& filePath);
 
 
@@ -58,11 +59,22 @@ private:
     Vector3 m_bgPos;        // 背景の座標
     float m_cutInAlpha = 0.0f; // 共通の透明度
 
+    // スタートテキスト
     SpriteRender m_staffSprite;   // 五線譜（判定ライン込）のスプライト
     Vector3 m_staffPos;
     Vector3 m_staffScale;
     float m_staffAlpha = 0.0f;
     float m_staffRotation = 0.0f; // ★追加：回転角（度数法）
+
+	// ゲーム終了テキスト
+	SpriteRender m_finishSprite;  // 終了時のエフェクト用スプライト
+	Vector3 m_finishPos;
+	Vector3 m_finishScale;
+	float m_finishAlpha = 0.0f;
+	float m_finishRotation = 0.0f; // ★追加：回転角（度数法）
+
+	SpriteRender m_buttonSprite;  // ボタンのスプライト
+    FontRender m_font;
 
     SpriteRender m_screen_Graw;
 	// 画面全体のグローエフェクト用スプライト
