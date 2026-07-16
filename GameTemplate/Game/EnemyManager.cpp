@@ -2,11 +2,20 @@
 #include "EnemyManager.h"
 #include "Enemy.h"
 #include "Boss.h"
+#include "Game.h"
+#include "GameCamera.h"
 
 namespace {
     const float SPORN_RANGE = 1000.0f;//ランダム生成範囲を設定
     const float SPAWN_LIMIT_TIME = 1.0f; // 通常時のスポーン間隔
     const float RUSH_SPAWN_LIMIT_TIME = 0.5f; // ラッシュ時のスポーン間隔（湧く速さを倍にする）
+
+    //--- 撃破の手応え ---
+    //ヒットストップのフレーム数。長いと連続撃破のたびにカクついて逆効果なので短くする。
+    const int KILL_HIT_STOP_FRAMES = 3;
+    //撃破時のカメラの揺れ。
+    const float KILL_SHAKE_TIME = 0.12f;
+    const float KILL_SHAKE_POWER = 8.0f;
 }
 
 //自分が生成した敵を道連れにする。
@@ -32,6 +41,14 @@ void EnemyManager::CountUpDeathCount()
     score *= GetChainMultiplier();
 
     m_killScore += (int)score;
+
+    //撃破の手応えを出す。同フレームに複数死んでも、それぞれの関数側で長い方・強い方が優先される。
+    if (m_game != nullptr) {
+        m_game->RequestHitStop(KILL_HIT_STOP_FRAMES);
+    }
+    if (m_camera != nullptr) {
+        m_camera->Shake(KILL_SHAKE_TIME, KILL_SHAKE_POWER);
+    }
 }
 
 //現在のチェイン数によるスコア倍率。1体目は等倍で、以降1体ごとに増える。
@@ -56,6 +73,10 @@ void EnemyManager::Init() {
 	m_chainTimer = 0.0f;
 	m_isRushMode = false;
 	m_isSpawnActive = true;
+
+	//撃破演出用の参照を拾っておく。撃破のたびにFindGOすると重いのでここで1回だけ。
+	m_game = FindGO<Game>("game");
+	m_camera = FindGO<GameCamera>("camera");
     // 最初に数体出しておきたい場合はここでSpawnを呼ぶ
 }
 
