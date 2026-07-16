@@ -2,6 +2,7 @@
 #include "TaskBarUI.h"
 #include "InGameNomalState.h"
 #include "EnemyManager.h"
+#include "Game.h"
 
 namespace
 {
@@ -18,6 +19,7 @@ namespace
     const Vector4 COLOR_GREEN = { 0.0f, 1.0f, 0.0f, 1.0f }; //緑
     const Vector4 COLOR_WHITE = { 1.0f, 1.0f, 1.0f, 1.0f }; //白色
 	const Vector4 COLOR_BLACK = { 0.0f, 0.0f, 0.0f, 1.0f }; //灰色
+	const Vector4 COLOR_RED = { 1.0f, 0.2f, 0.2f, 1.0f }; //赤色（ラッシュ中の警告用）
 
     // タスクの説明の表示位置
     const Vector3 TASK_FONT_POSITION = { 350.0f, 400.0f, 0.0f }; // タスクバーの上あたり
@@ -81,71 +83,61 @@ void TaskBarUI::Init()
     m_killFont.SetScale(KILL_SIZE);
     m_killFont.SetColor(COLOR_WHITE);
 
-	////現在のキル数の初期化
-	//wchar_t killEnemyDescription[256];
-	//std::wstring killEnemy = L"0";
-	//m_killEnemyFont.SetText(killEnemy.c_str());
-	//m_killEnemyFont.SetPosition(KILL_ENEMY_FONT_POSITION);
-	//m_killEnemyFont.SetScale(KILL_SIZE);
-	//m_killEnemyFont.SetColor(COLOR_WHITE);
+	//現在のキル数の初期化
+	m_killEnemyFont.SetText(L"0");
+	m_killEnemyFont.SetPosition(KILL_ENEMY_FONT_POSITION);
+	m_killEnemyFont.SetScale(KILL_SIZE);
+	m_killEnemyFont.SetColor(COLOR_WHITE);
 
-	//// 残り時間の初期化
-	//wchar_t gameTimerDescription[256];
-	//std::wstring gameTimer = L"残り：";
-	//m_gameTimerFont.SetText(gameTimer.c_str());
-	//m_gameTimerFont.SetPosition(GAME_TIMER_FONT_POSITION);
-	//m_gameTimerFont.SetScale(KILL_SIZE);
-	//m_gameTimerFont.SetColor(COLOR_WHITE);
+	// 残り時間の初期化
+	m_gameTimerFont.SetText(L"残り：");
+	m_gameTimerFont.SetPosition(GAME_TIMER_FONT_POSITION);
+	m_gameTimerFont.SetScale(KILL_SIZE);
+	m_gameTimerFont.SetColor(COLOR_WHITE);
 
     // 参照を取得
     m_enemyManager = FindGO<EnemyManager>("EnemyManager");
+	m_gameRef = FindGO<Game>("game");
 }
 
 void TaskBarUI::Update()
 {
     
-    if (m_enemyManager == nullptr) return;
-    
+    if (m_enemyManager == nullptr || m_gameRef == nullptr) return;
+
     //////////////// タスクバーのゲージ処理 ////////////////////////////////////////
 
-    // 1. 現在の撃破数を取得
-    m_killCount = static_cast<float>(m_enemyManager->m_deathCount);
-	m_killMax = 200;
+    // 1. 現在の撃破数と残り時間を取得
+    m_killCount = m_enemyManager->GetDeathCount();
+	m_remainTime = m_gameRef->m_gameTimer;
 
-	// 2. 撃破数の割合を計算
-	float wari = (float)m_killCount / (float)m_killMax;
-	Vector3 scale = { wari, 1.0f, 1.0f };
-    scale.x = wari;
+	// 2. 制限時間制なので、ゲージは「残り時間」の割合を表す
+	float wari = m_remainTime / Game::GAME_TIME_LIMIT;
+	if (wari < 0.0f) wari = 0.0f;
+	if (wari > 1.0f) wari = 1.0f;
 
 	// 3. ゲージのスケールを更新
-    m_fillBar.SetScale(scale);
+    m_fillBar.SetScale({ wari, 1.0f, 1.0f });
 
-	// 4. 背景バーよりもゲージ本体の方が大きくならないようにする
-    if (m_killCount >= m_killMax) {
+	// 4. ラッシュ中はゲージと残り時間を赤くして、残り30秒を切ったことを知らせる
+	const bool isRush = m_enemyManager->IsRushMode();
+	m_fillBar.SetMulColor(isRush ? COLOR_RED : COLOR_YELLOW);
 
-		m_killCount = m_killMax;
+	// 5. 現在のキル数をフォントに反映
+	wchar_t killEnemyStr[256];
+	swprintf_s(killEnemyStr, L"%d", m_killCount);
+	m_killEnemyFont.SetText(killEnemyStr);
 
-    }
-
-	//// 5. 現在のキル数をフォントに反映
-	//wchar_t killEnemyStr[256];
-	//swprintf_s(killEnemyStr, L"%d", m_killCount);
-	//m_killEnemyFont.SetText(killEnemyStr);
-
- //   // 6. ゲーム時間の表示を更新
-	//wchar_t gameTimerStr[256];
-	//swprintf_s(gameTimerStr, L"残り：%d秒");
-	//m_gameTimerFont.SetText(gameTimerStr);
-
-
+    // 6. ゲーム時間の表示を更新（切り上げて1〜90と表示されるようにする）
+	wchar_t gameTimerStr[256];
+	swprintf_s(gameTimerStr, L"残り：%d秒", (int)ceil(m_remainTime));
+	m_gameTimerFont.SetText(gameTimerStr);
+	m_gameTimerFont.SetColor(isRush ? COLOR_RED : COLOR_WHITE);
 
 	// 更新処理
     m_backBar.Update();
     m_fillBar.Update();
 	m_partition.Update();
-
-    //m_killEnemyFontRender.SetPosition(FONT_POSITION);// フォントの位置をタスクバーの上に設定
-
 }
 
 void TaskBarUI::Render(RenderContext& rc)
@@ -155,5 +147,6 @@ void TaskBarUI::Render(RenderContext& rc)
 	m_partition.Draw(rc);
     m_taskFont.Draw(rc);
     m_killFont.Draw(rc);
-	/*m_missionKill.Draw(rc);*/
+	m_killEnemyFont.Draw(rc);
+	m_gameTimerFont.Draw(rc);
 }
