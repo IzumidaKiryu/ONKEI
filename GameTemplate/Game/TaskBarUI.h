@@ -23,7 +23,9 @@ private:
     SpriteRender  m_partition;  //区切り用
 
     FontRender m_taskFont;//「敵をたくさん倒そう！」のテキスト
-    FontRender m_killFont;//「進捗：」のテキスト
+    FontRender m_killFont;//「倒した数：」のテキスト
+	FontRender m_killEnemyFont;//現在のキル数のテキスト
+	FontRender m_gameTimerFont;//残り時間のテキスト
 
 	int m_killCount = 0; // 現在のキル数
 	int m_killMax = 20;   // クリアに必要なキル数

@@ -1,5 +1,6 @@
 #pragma once
 #include "GameState.h"
+#include "sound/SoundSource.h"
 
 
 //雑魚敵戦のインゲームステート
@@ -12,6 +13,7 @@ class SkillButton;
 class TaskBarUI;
 class StartUI;
 class ClearUI;
+class ResultState;
 
 class InGameNomalState : public IGameState {
 
@@ -45,6 +47,7 @@ private:
 	Stage* m_stage;
 	SkillButton* m_skillButton;
 	SkyCube* m_skyCube;
+	ResultState* m_resultState;
 
 	TaskBarUI* m_taskBarUI;
 	StartUI* m_startUI;

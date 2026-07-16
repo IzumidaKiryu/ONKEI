@@ -6,7 +6,7 @@
 namespace {
     const float SPORN_RANGE = 1000.0f;//ランダム生成範囲を設定
     const float SPAWN_LIMIT_TIME = 1.0f; // 1秒という数値を定数化
-    const int MAX_ENEMIES = 10;          // 最大数も定数化
+    const int MAX_ENEMIES = 15;          // 最大数も定数化
 }
 
 void EnemyManager::Init() {
@@ -19,9 +19,9 @@ void EnemyManager::Init() {
 void EnemyManager::SpawnEnemies() {
 
   //エネミーを20体スポーンさせるまで、1秒ごとにスポーンさせる
-  if (m_spawnEnemyCount >= m_maxEnemyCount) {
-		return; // 既に最大数スポーンしているので、これ以上スポーンさせない
-  }
+  //if (m_spawnEnemyCount >= m_maxEnemyCount) {
+		//return; // 既に最大数スポーンしているので、これ以上スポーンさせない
+  //}
     
   // 1. タイマーを進める
   m_spawnTimer += g_gameTime->GetFrameDeltaTime();

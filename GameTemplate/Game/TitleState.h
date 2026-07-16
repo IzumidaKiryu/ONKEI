@@ -1,5 +1,6 @@
 #pragma once
 #include "GameState.h"
+#include "sound/SoundSource.h"
 
 class TitleState : public IGameState {
 public:
@@ -12,6 +13,9 @@ private:
 	FontRender m_titleFont; //Prees a buttonの文字を描画するためのFontRender
 	Vector4 m_fontColor = {0.0f, 0.0f, 0.0f, 1.0f}; //文字の色
 	Game* m_game;
+
+	SoundSource* m_tapSound; //ボタンを押したときの効果音
+	SoundSource* m_titleSound;//タイトルのBGM
 
 	float m_timer = 0.0f; //タイマー
 	float m_maxTitleTime = 1.0f; //タイトルの最大時間

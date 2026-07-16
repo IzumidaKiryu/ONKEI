@@ -2,6 +2,7 @@
 #include "TitleState.h"
 #include "InGameNomalState.h"
 #include "Game.h"
+#include "sound/SoundEngine.h"
 
 namespace {
     //文字の表示。
@@ -16,11 +17,18 @@ void TitleState::Initialize(Game* game) {
     m_titleFont.SetText(L"Press A Button");
     m_titleFont.SetPosition(GAME_FONT_POSITION);
 	m_titleFont.SetColor(m_fontColor);
+
 }
 
 void TitleState::Update(Game* game) {
     // Aボタンでゲーム本編へ
     if (g_pad[0]->IsTrigger(enButtonA)&&m_isChangeFlag==false) {
+		//タイトルBGMの再生。
+		g_soundEngine->ResistWaveFileBank(5,"Assets/sound/buttonTap.wav");
+		m_tapSound = NewGO<SoundSource>(5);
+		m_tapSound->Init(5);
+		m_tapSound->Play(false);
+		//ノーマルステートに遷移する。
         m_game->ChangeState(new InGameNomalState());
 		m_isChangeFlag = true;
     }
