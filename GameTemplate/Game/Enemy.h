@@ -35,7 +35,7 @@ public:
 	Vector3 m_wanderPos;//“G‚Ìœpœj‚Ì’n“_
 	Quaternion m_rot = Quaternion::Identity;// “G‚Ì‰ñ“]
 
-	int m_hpMax = 70;// “G‚ÌÅ‘åHP
+	int m_hpMax = 30;// “G‚ÌÅ‘åHP
 	int m_hp = m_hpMax;// “G‚ÌŒ»İ‚ÌHP
 
 private:
