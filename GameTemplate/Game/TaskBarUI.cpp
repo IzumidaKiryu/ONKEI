@@ -43,8 +43,13 @@ namespace
 	// 「残り：60秒」の表示位置
 	const Vector3 GAME_TIMER_FONT_POSITION = { 300.0f,275.0f,0.0f };
 
+	// 「SCORE 0012345」の表示位置。ゲージ(Y=235,高さ40)の下に置く。
+	const Vector3 SCORE_FONT_POSITION = { 300.0f,200.0f,0.0f };
+	// スコアを稼ぐゲームなので主役として少し大きめ。
+	const float SCORE_SIZE = 1.2f;
+
 	// 「12 CHAIN x1.9」の表示位置。HUDの下、プレイ中に目に入る高さに置く。
-	const Vector3 CHAIN_FONT_POSITION = { 300.0f,170.0f,0.0f };
+	const Vector3 CHAIN_FONT_POSITION = { 300.0f,140.0f,0.0f };
 	// チェインは煽りたいので少し大きめ。
 	const float CHAIN_SIZE = 1.4f;
 	// この数から表示する（1体倒しただけで出すとうるさい）。
@@ -101,6 +106,12 @@ void TaskBarUI::Init()
 	m_gameTimerFont.SetScale(KILL_SIZE);
 	m_gameTimerFont.SetColor(COLOR_WHITE);
 
+	// スコア表示の初期化
+	m_scoreFont.SetText(L"SCORE 0000000");
+	m_scoreFont.SetPosition(SCORE_FONT_POSITION);
+	m_scoreFont.SetScale(SCORE_SIZE);
+	m_scoreFont.SetColor(COLOR_WHITE);
+
 	// チェイン表示の初期化
 	m_chainFont.SetText(L"");
 	m_chainFont.SetPosition(CHAIN_FONT_POSITION);
@@ -146,7 +157,13 @@ void TaskBarUI::Update()
 	m_gameTimerFont.SetText(gameTimerStr);
 	m_gameTimerFont.SetColor(isRush ? COLOR_RED : COLOR_WHITE);
 
-	// 7. 連続撃破の表示。2チェイン以上のときだけ出す。
+	// 7. 合計スコアの表示。InGameNomalStateが毎フレームGameに反映している値を読む。
+	m_totalScore = m_gameRef->m_totalScore;
+	wchar_t scoreStr[256];
+	swprintf_s(scoreStr, L"SCORE %07d", m_totalScore);
+	m_scoreFont.SetText(scoreStr);
+
+	// 8. 連続撃破の表示。2チェイン以上のときだけ出す。
 	m_chainCount = m_enemyManager->GetChainCount();
 	if (m_chainCount >= CHAIN_DISPLAY_MIN) {
 		const float mul = m_enemyManager->GetChainMultiplier();
@@ -174,5 +191,6 @@ void TaskBarUI::Render(RenderContext& rc)
     m_taskFont.Draw(rc);
     m_killFont.Draw(rc);
 	m_gameTimerFont.Draw(rc);
+	m_scoreFont.Draw(rc);
 	m_chainFont.Draw(rc);
 }

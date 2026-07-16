@@ -5,7 +5,8 @@
 
 // デストラクタ: ゲーム終了時にメモリを掃除する
 Game::~Game() {
-  
+	//ヒットストップ中にゲームが終わっても時間が止まったままにならないよう戻しておく。
+	g_gameTime->DisableFixedFrameDeltaTime();
 }
 
 // ゲーム開始時の初期化
@@ -18,6 +19,9 @@ bool Game::Start() {
 
 // 毎フレームの更新処理
 void Game::Update() {
+    //ヒットストップの解除処理。ステートより先に処理する。
+    UpdateHitStop();
+
     // 現在のステートに更新処理を丸投げする
     if (m_currentState) {
         m_currentState->Update(this);
@@ -91,6 +95,32 @@ void Game::PushState(IGameState* overlayState) {
 }
 
 // 重ねたシーンを破棄して、前のシーンに戻る
+//ヒットストップの要求。撃破の瞬間にゲーム全体の時間を止めて手応えを出す。
+//同じフレームに複数の敵が死んでも、長い方が優先される。
+void Game::RequestHitStop(int frames)
+{
+	if (frames > m_hitStopFrames) {
+		m_hitStopFrames = frames;
+	}
+	//デルタタイムを0に固定して、ゲーム全体の時間を止める。
+	g_gameTime->EnableFixedFrameDeltaTime(0.0f);
+}
+
+//ヒットストップの解除。
+//止めている間はデルタタイムが0なので、残りを「時間」で数えると永久に減らず固まる。
+//そのため必ず「フレーム数」で数える。
+void Game::UpdateHitStop()
+{
+	if (m_hitStopFrames <= 0) {
+		return;
+	}
+	m_hitStopFrames--;
+	if (m_hitStopFrames <= 0) {
+		m_hitStopFrames = 0;
+		g_gameTime->DisableFixedFrameDeltaTime();
+	}
+}
+
 void Game::PopState() {
     if (m_currentState) {
         delete m_currentState;

@@ -4,6 +4,8 @@
 
 class Enemy;
 class Boss;
+class Game;
+class GameCamera;
 
 // 敵の初期配置用データ構造体
 struct EnemySpawnData {
@@ -63,6 +65,11 @@ public:
     int m_killScore = 0;//撃破スコアの合計
     int m_chainCount = 0;//連続撃破数。一定時間倒さないと0に戻る。
     float m_chainTimer = 0.0f;//チェインが切れるまでの残り時間
+
+    //撃破の手応え（ヒットストップ・カメラ揺れ）を出すための参照。
+    //撃破のたびにFindGOすると重いのでInitで拾っておく。
+    Game* m_game = nullptr;
+    GameCamera* m_camera = nullptr;
 
 private:
 

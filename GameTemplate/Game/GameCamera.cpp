@@ -2,6 +2,11 @@
 #include "GameCamera.h"
 #include "Player.h"
 
+namespace {
+	//シェイクの揺れ幅を時間経過で減衰させるための最小値。
+	const float SHAKE_MIN_TIME = 0.0001f;
+}
+
 GameCamera::GameCamera()
 {
 }
@@ -59,10 +64,53 @@ void GameCamera::Update() {
 
 	//視点を計算する。
 	m_pos = m_target + m_toCameraPos;
+
+	//揺れを反映する。
+	UpdateShake();
+	m_pos += m_shakeOffset;
+	m_target += m_shakeOffset;
 	//メインカメラに注視点と視点を設定する。
 	g_camera3D->SetTarget(m_target);
 	g_camera3D->SetPosition(m_pos);
 
 	//カメラの更新。
 	g_camera3D->Update();
+}
+
+//カメラを揺らす。敵を倒した瞬間などに外部から呼ばれる。
+void GameCamera::Shake(float time, float power)
+{
+	//連続で呼ばれたときは、強い方・長い方を優先する。
+	if (power >= m_shakePower) {
+		m_shakePower = power;
+	}
+	if (time > m_shakeTime) {
+		m_shakeTime = time;
+		m_shakeTimeMax = time;
+	}
+}
+
+//揺れの更新。残り時間に応じて減衰させていく。
+void GameCamera::UpdateShake()
+{
+	if (m_shakeTime <= 0.0f) {
+		m_shakeOffset = Vector3::Zero;
+		return;
+	}
+
+	m_shakeTime -= g_gameTime->GetFrameDeltaTime();
+	if (m_shakeTime <= 0.0f) {
+		m_shakeTime = 0.0f;
+		m_shakePower = 0.0f;
+		m_shakeOffset = Vector3::Zero;
+		return;
+	}
+
+	//残り時間の割合で揺れ幅を減衰させる。
+	const float rate = m_shakeTime / max(m_shakeTimeMax, SHAKE_MIN_TIME);
+	const float power = m_shakePower * rate;
+
+	//-1.0～1.0の乱数でランダムに揺らす。
+	auto rnd = []() { return ((float)rand() / RAND_MAX) * 2.0f - 1.0f; };
+	m_shakeOffset.Set(rnd() * power, rnd() * power, rnd() * power);
 }

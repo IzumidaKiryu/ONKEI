@@ -21,6 +21,11 @@ public:
     void PopState();
     IGameState* GetCurrentState() { return m_currentState; }
 
+	//ヒットストップの要求。指定フレーム数だけゲーム全体の時間を止める。
+	//EnemyManager等ではなくGameが持つ理由：EnemyManagerはリズムゲーム中にDeactivateされ、
+	//Updateが止まって解除できなくなる（＝ゲームが永久に固まる）。Gameは誰も止めない。
+	void RequestHitStop(int frames);
+
 	//制限時間（秒）。インゲームはこの時間からカウントダウンする。
 	static constexpr float GAME_TIME_LIMIT = 90.0f;
 
@@ -41,6 +46,13 @@ public:
 		m_scoreTimer = 0.0f;
 	}
 private:  
+	//ヒットストップの解除処理。毎フレームGame::Updateの先頭で呼ぶ。
+	void UpdateHitStop();
+	//ヒットストップの残りフレーム数。
+	//止めている間はデルタタイムが0になるため、解除は「時間」ではなく「フレーム数」で数える。
+	//時間で数えると0秒しか進まず、永久に解除されない。
+	int m_hitStopFrames = 0;
+
     IGameState* m_currentState = nullptr; // unique_ptrをやめる
     // stackも使うなら std::stack<IGameState*> に変更
     std::stack<IGameState*> m_stateStack;
