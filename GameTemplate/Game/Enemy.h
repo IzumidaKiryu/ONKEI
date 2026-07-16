@@ -17,6 +17,9 @@ public:
 	void Wander();// 敵の徘徊を管理する関数
 	void Attack();// 攻撃する関数
 	void OnDamage(int damage);// ダメージを受ける関数
+	//指定のエフェクトをその場所で再生する。
+	//EffectEmitterは再生が終わると自分で消えるので、こちら側では持たない。
+	void PlayEffect(int effectNo, const Vector3& scale, const Vector3& pos);
     void Render(RenderContext& rc) override;
 	const Vector3& GetPosition() const { return m_position; }
     

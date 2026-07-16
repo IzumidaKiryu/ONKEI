@@ -15,6 +15,35 @@ EnemyManager::~EnemyManager() {
     ClearAllEnemies();
 }
 
+//撃破数と撃破スコアを加算する。
+//スコア＝基礎点 ×ラッシュ倍率 ×チェイン倍率。倒し続けるほど美味しくして手を止めさせない。
+void EnemyManager::CountUpDeathCount()
+{
+    m_deathCount++;
+
+    //連続撃破を伸ばす。次を倒すまでの猶予をここでリセットする。
+    m_chainCount++;
+    m_chainTimer = CHAIN_WINDOW_TIME;
+
+    float score = (float)KILL_SCORE_PER_ENEMY;
+    if (m_isRushMode) {
+        score *= 2.0f;
+    }
+    score *= GetChainMultiplier();
+
+    m_killScore += (int)score;
+}
+
+//現在のチェイン数によるスコア倍率。1体目は等倍で、以降1体ごとに増える。
+float EnemyManager::GetChainMultiplier() const
+{
+    if (m_chainCount <= 1) {
+        return 1.0f;
+    }
+    const float mul = 1.0f + (m_chainCount - 1) * CHAIN_MULTIPLIER_STEP;
+    return (mul > CHAIN_MULTIPLIER_MAX) ? CHAIN_MULTIPLIER_MAX : mul;
+}
+
 void EnemyManager::Init() {
 
     m_enemies.clear();
@@ -23,6 +52,8 @@ void EnemyManager::Init() {
 	m_deathCount = 0;
 	m_killScore = 0;
 	m_spawnEnemyCount = 0;
+	m_chainCount = 0;
+	m_chainTimer = 0.0f;
 	m_isRushMode = false;
 	m_isSpawnActive = true;
     // 最初に数体出しておきたい場合はここでSpawnを呼ぶ
@@ -114,6 +145,17 @@ void EnemyManager::ClearAllEnemies() {
 }
 
 void EnemyManager::Update() {
+
+	//チェインの猶予を減らし、時間切れなら連続撃破を打ち切る。
+	//リズムゲーム中はEnemyManagerごとDeactivateされるのでここは進まず、チェインは維持される。
+	if (m_chainCount > 0) {
+		m_chainTimer -= g_gameTime->GetFrameDeltaTime();
+		if (m_chainTimer <= 0.0f) {
+			m_chainTimer = 0.0f;
+			m_chainCount = 0;
+		}
+	}
+
 	//ボスを呼びだされるまではザコ敵をスポーンさせる
     if (m_isSpawnActive) {
         SpawnEnemies();

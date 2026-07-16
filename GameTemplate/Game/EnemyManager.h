@@ -22,11 +22,19 @@ public:
 	//雑魚敵1体あたりの撃破スコア
 	static constexpr int KILL_SCORE_PER_ENEMY = 1000;
 
-	//撃破数と撃破スコアを加算する。ラッシュ中は撃破スコアが倍になる。
-    void CountUpDeathCount() {
-        m_deathCount++;
-        m_killScore += m_isRushMode ? KILL_SCORE_PER_ENEMY * 2 : KILL_SCORE_PER_ENEMY;
-    }
+	//チェインが途切れるまでの猶予（秒）。この間に次を倒せばチェインが継続する。
+	static constexpr float CHAIN_WINDOW_TIME = 3.0f;
+	//チェイン倍率の上限。
+	static constexpr float CHAIN_MULTIPLIER_MAX = 3.0f;
+	//1チェインあたりの倍率の増分。
+	static constexpr float CHAIN_MULTIPLIER_STEP = 0.1f;
+
+	//撃破数と撃破スコアを加算する。ラッシュ中とチェイン中はスコアが増える。
+    void CountUpDeathCount();
+	//現在のチェイン数によるスコア倍率を返す。
+    float GetChainMultiplier() const;
+	//現在の連続撃破数。
+    int GetChainCount() const { return m_chainCount; }
     int GetDeathCount() const { return m_deathCount; }
 	//撃破で稼いだスコアの合計を返す
     int GetKillScore() const { return m_killScore; }
@@ -53,6 +61,8 @@ public:
 
     int m_deathCount = 0;
     int m_killScore = 0;//撃破スコアの合計
+    int m_chainCount = 0;//連続撃破数。一定時間倒さないと0に戻る。
+    float m_chainTimer = 0.0f;//チェインが切れるまでの残り時間
 
 private:
 
