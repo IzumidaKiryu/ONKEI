@@ -43,7 +43,6 @@ private:
     FontRender m_totalScoreFont;        // スコア用
     FontRender m_clearTimeFont;         // タイム用
 	FontRender m_killCountFont;        // キル数用
-	bool m_killCountFontDraw = false; //キル数を描画するかどうかのフラグ
 
     FontRender m_ButtonFont; //Prees a buttonの文字を描画するためのFontRender
     Vector4 m_fontColor = { 1.0f, 1.0f, 1.0f, 1.0f }; //文字の色

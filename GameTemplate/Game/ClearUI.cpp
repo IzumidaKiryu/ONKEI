@@ -29,8 +29,9 @@ void ClearUI::Init()
 	m_backSprite.SetPosition(BACK_POSITION);
 	m_backSprite.SetScale(BACK_SCALE);
 	m_backSprite.SetMulColor(BACK_COLOR);
-	//クリアテキストの初期化
-	m_clearText.Init("Assets/UI/gameClearFont.DDS", 1920.0f, 1080.0f);
+	//終了テキストの初期化。
+	//制限時間制になったので「CLEAR」ではなく「FINISH」を出す。
+	m_clearText.Init("Assets/UI/gameFinishFont.DDS", 1920.0f, 1080.0f);
 	m_clearText.SetPosition(CLEAR_TEXT_POSITION);
 	m_clearText.SetScale(CLEAR_TEXT_SCALE);
 

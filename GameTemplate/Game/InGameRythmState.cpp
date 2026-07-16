@@ -123,6 +123,10 @@ void InGameRythmState::Update(Game* game)
             int totalScore = m_rythmGame->GetTotalScore(); // RythmGame.hにGetterが必要
             int maxCombo = m_rythmGame->GetCombo();     // RythmGame.hにGetterが必要
 
+            // ★リズムゲームで稼いだスコアを合計スコアに加算する。
+            //   （リザルトの合計スコア＝雑魚敵の撃破スコア＋ここで貯めたスコア）
+            m_game->m_rythmScore += totalScore;
+
             // 2. ダメージ量の計算アルゴリズム（例：スコアの 1/100 + コンボボーナス）
             float finalDamage = (totalScore * 0.01f) + (1.0f + (maxCombo * 0.05f));
             float range = 1000.0f; // 攻撃範囲

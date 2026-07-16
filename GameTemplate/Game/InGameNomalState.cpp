@@ -37,6 +37,10 @@ InGameNomalState::~InGameNomalState() {
 void InGameNomalState::Initialize(Game* game) {
 
     m_game = game;
+	//前回のプレイの記録（残り時間・撃破数・スコア）をリセットする。
+	//これが無いと2回目のプレイで残り時間が0のままになり、開始直後にリザルトへ飛んでしまう。
+	m_game->ResetGame();
+
 	m_player = NewGO<Player>(0,"player");
 	// 「あなたの親は私（NormalState）ですよ」と教える
 	m_player->SetParentState(this);
@@ -75,26 +79,25 @@ void InGameNomalState::Update(Game* game) {
 		//ゲームUIの作成
 		CreateUI();
 
+		//撃破数とスコアを毎フレームGameに反映しておく（リザルトはこれを読む）
+		UpdateScore();
+
 		StageClear();
 
 		GameOver();
 
 		//ゲームオーバー、ゲームクリアのフラグが立っているかを確認して、立っていたらそれぞれのステートに遷移する
 		if (m_isGameOver == true) {
-			//EnemyManagerのキル数をGameのm_deathCountに渡す
-			m_game->m_deathCount = m_enemyManager->GetDeathCount();
-			m_enemyManager->ClearAllEnemies();
+			EndGameSpawn();
 			m_game->ChangeState(new ResultState(ResultState::ResultType::enGameOver));
 			m_isGameOver = false; // フラグをリセットしておく（次のプレイでゲームオーバーになったときに正しく遷移するように）
 			return;
 		}
 		else if (m_isGameClear == true) {
-			m_enemyManager->ClearAllEnemies(); // これは一回だけ呼ぶべきです
-			//m_game->ChangeState(new InGameBossState());
-			//return; // 遷移したら即終了
 
 			// 1. まだ生成されていなければ生成する
 			if (!m_isClearUI) {
+				EndGameSpawn();
 				m_clearUI = NewGO<ClearUI>(0, "clearUI");
 				m_clearUI->Init();
 				m_isClearUI = true;
@@ -103,8 +106,6 @@ void InGameNomalState::Update(Game* game) {
 			else {
 				// m_clearUI はすでに存在するので安全
 				if (m_clearUI->m_clearUITimer >= 3.0f) {
-					//EnemyManagerのキル数をGameのm_deathCountに渡す
-					m_game->m_deathCount = m_enemyManager->GetDeathCount();
 					m_game->ChangeState(new ResultState(ResultState::ResultType::enClear));
 					m_isGameClear = false;
 					return; // 遷移したら即終了
@@ -113,14 +114,8 @@ void InGameNomalState::Update(Game* game) {
 		}
 		//判定が何もないなら
 		else {
-
-			//ゲーム時間を減算
-			m_game->m_gameTimer -= g_gameTime->GetFrameDeltaTime();
-
-			//ゲーム時間が0以下になったら0にする。
-			if (m_game->m_gameTimer <= 0.0f) {
-				m_game->m_gameTimer = 0.0f;
-			}
+			//残り時間の減算とラッシュへの切り替え
+			UpdateTimeLimit();
 		}
 
 		//スキルゲージが100溜まったら
@@ -242,6 +237,48 @@ void InGameNomalState::ResetFlags()
 void InGameNomalState::UpdateSPButton()
 {
 
+}
+
+//残り時間の減算と、ラッシュへの切り替え
+void InGameNomalState::UpdateTimeLimit()
+{
+	//ゲーム時間を減算
+	m_game->m_gameTimer -= g_gameTime->GetFrameDeltaTime();
+
+	//ゲーム時間が0以下になったら0にする。
+	if (m_game->m_gameTimer <= 0.0f) {
+		m_game->m_gameTimer = 0.0f;
+	}
+
+	//残り30秒を切ったらラッシュ開始。敵の最大数・湧く速さ・撃破スコアが倍になる。
+	//切り替えは一度だけ行う。
+	if (!m_isRushStarted && m_game->m_gameTimer <= RUSH_START_REMAIN_TIME) {
+		m_isRushStarted = true;
+		if (m_enemyManager != nullptr) {
+			m_enemyManager->SetRushMode(true);
+		}
+	}
+}
+
+//ゲーム終了時の敵の後始末。
+//先にスポーンを打ち切ってから一掃する。順番が逆だと、遷移演出（Loadingのフェード）の間に
+//EnemyManager::Updateが敵を湧かせ直してしまい、その敵がリザルトまで生き残ってHPゲージが残る。
+void InGameNomalState::EndGameSpawn()
+{
+	if (m_enemyManager == nullptr) return;
+
+	m_enemyManager->StopSpawn();
+	m_enemyManager->ClearAllEnemies();
+}
+
+//撃破スコアとリズムゲームスコアを合計してGameに反映する
+void InGameNomalState::UpdateScore()
+{
+	if (m_enemyManager == nullptr) return;
+
+	m_game->m_deathCount = m_enemyManager->GetDeathCount();
+	//合計スコア ＝ 雑魚敵の撃破スコア ＋ リズムゲームで稼いだスコア
+	m_game->m_totalScore = m_enemyManager->GetKillScore() + m_game->m_rythmScore;
 }
 
 void InGameNomalState::StageClear()

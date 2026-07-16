@@ -23,6 +23,18 @@ namespace {
 	const float SP_INCREASEKARI = 200.0f;//SPゲージの増加量仮(200が本家スクスタの基本値)。
 	const float HP_MAXKARI = 189000.0f;//HPの最大値。
 	const float VOLTAGE_MAXKARI = 7120000;//ボルテージの最大値。
+
+	//--- 左下でリズムに乗るキャラ ---
+	const char* UNI_CHARA_PATH = "Assets/UI/Uni.DDS";
+	//画像の元サイズ。
+	const float UNI_CHARA_WIDTH = 301.0f;
+	const float UNI_CHARA_HEIGHT = 355.0f;
+	//表示位置。レーン(Y=-175あたりが下端)と操作説明(Y=-250付近)を避けた左下。
+	const Vector3 UNI_CHARA_POSITION = Vector3(-720.0f, -320.0f, 0.0f);
+	//拍の頭以外での基本の大きさ。
+	const float UNI_CHARA_BASE_SCALE = 0.6f;
+	//拍の頭でどれだけ大きくなるか。
+	const float UNI_CHARA_PULSE_AMP = 0.18f;
 }
 
 RythmGame::RythmGame() {
@@ -125,6 +137,12 @@ void RythmGame::Init(std::string songName) {
 	g_soundEngine->ResistWaveFileBank(1, "Assets/SE/shyan.wav");
 	m_perfectSound = NewGO<SoundSource>(1, "perfectSound");
 
+	//左下でリズムに乗るキャラの初期化。
+	m_uniChara.Init(UNI_CHARA_PATH, UNI_CHARA_WIDTH, UNI_CHARA_HEIGHT);
+	m_uniChara.SetPosition(UNI_CHARA_POSITION);
+	m_uniChara.SetScale({ UNI_CHARA_BASE_SCALE, UNI_CHARA_BASE_SCALE, 1.0f });
+	m_uniChara.Update();
+
 	//レーンの描画
 	m_lane.Init("Assets/UI/lane.DDS", 2000, 350);
 	m_lane.SetPosition({ 300.0f,0.0f,0.0f });
@@ -186,6 +204,9 @@ void RythmGame::Update() {
 
 	// 3. 判定円の更新（Initで設定した X=-150, Y=100/-100 の位置でUpdateされる）
 	m_judgmentiCrcule.Update();
+
+	// 左下のキャラを拍に合わせて拡縮させる
+	UpdateBeatChara();
 	// 7. 全ノーツの更新
 // Note::Update(musicElapsedTime) 内で「右から左」への移動計算が行われます
 	for (auto& note : m_notes) {
@@ -272,6 +293,32 @@ void RythmGame::Update() {
 		m_notes.end());
 }
 
+// --- 左下のキャラを拍に合わせて拡縮させる ---
+// 曲のBPMから「今が拍のどのあたりか」を出して、拍の頭で大きく・次の拍に向かって縮ませる。
+void RythmGame::UpdateBeatChara()
+{
+	// BPMが不正なら等倍のままにしておく（0除算よけ）。
+	if (m_chart.bpm <= 0) {
+		m_uniChara.SetScale({ UNI_CHARA_BASE_SCALE, UNI_CHARA_BASE_SCALE, 1.0f });
+		m_uniChara.Update();
+		return;
+	}
+
+	// 1拍の長さ（秒）。
+	const float beatLength = 60.0f / (float)m_chart.bpm;
+	// 曲頭からの経過を拍数に変換する。offsetは譜面の頭合わせ。
+	const float beats = (m_currentTime - m_chart.offset) / beatLength;
+	// 拍の中での位置。0.0が拍の頭、1.0で次の拍。
+	const float phase = beats - floorf(beats);
+
+	// 拍の頭を1.0として次の拍に向かって0へ。2乗して「ドン、スッ」という減衰にする。
+	const float pulse = (1.0f - phase) * (1.0f - phase);
+	const float scale = UNI_CHARA_BASE_SCALE + UNI_CHARA_PULSE_AMP * pulse;
+
+	m_uniChara.SetScale({ scale, scale, 1.0f });
+	m_uniChara.Update();
+}
+
 // --- PlaySE: SE再生関数 (復活) ---
 void RythmGame::PlaySE()
 {
@@ -294,6 +341,9 @@ void RythmGame::Render(RenderContext& rc) {
 	m_lane.Draw(rc);
 
 	m_backSprite.Draw(rc);
+
+	// 左下でリズムに乗るキャラ。レーンより手前に出したいのでここで描く。
+	m_uniChara.Draw(rc);
 
 	// 判定円の描画
 	m_judgmentiCrcule.Draw(rc);

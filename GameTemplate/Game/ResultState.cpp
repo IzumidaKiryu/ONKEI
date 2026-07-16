@@ -23,9 +23,8 @@ void ResultState::Initialize(Game* game)
     m_blueBandSprite.Init("Assets/sprite/white.DDS", 1920, 350);
     m_blueBandSprite.SetMulColor({ 0.0f, 0.2f, 0.6f, 0.5f }); // GV風の半透明紺色
 
-    // 3. スコアとタイムの目標値を設定 (本来は前ステージのマネージャーから取得)
-    m_targetScore = 125000.0f;
-	//m_targetClearTime = m_game->m_scoreTimer; // 前ステージで記録したプレイ時間を使用
+    // 3. 目標スコアを設定。インゲームで実際に稼いだ合計スコア（撃破スコア＋リズムゲームスコア）を使う。
+    m_targetScore = (float)m_game->m_totalScore;
 
 	m_resultSprite.Init("Assets/UI/resultText.DDS", 1920, 1080);
 	m_resultSprite.SetPosition(Vector3(-750.0f, 500.0f, 0.0f));
@@ -54,32 +53,22 @@ void ResultState::Update(Game* game)
         // --- 1. スコア加算 ---
         if (m_displayScore < m_targetScore) {
             m_displayScore += (m_targetScore - m_displayScore) * 0.1f + 111.0f;
-            if (m_displayScore >= m_targetScore) {
-                m_displayScore = m_targetScore;
-                // ここでスコア確定音！
-                m_currentPhase = Phase::enTimeCount; // 次の演出へ
-            }
+        }
+        // 到達判定は加算とは別に行う。
+        // こうしないと合計スコアが0（1体も倒せずゲームオーバー等）のときに
+        // 次のフェーズへ進めず、リザルトが操作不能になってしまう。
+        if (m_displayScore >= m_targetScore) {
+            m_displayScore = m_targetScore;
+            // ここでスコア確定音！
+            m_currentPhase = Phase::enTimeCount; // 次の演出へ
         }
         break;
 
     case Phase::enTimeCount:
-        // --- 2. タイム加算 ---
-        //if (m_displayClearTime < m_targetClearTime) {
-        //    m_displayClearTime += (m_targetClearTime - m_displayClearTime) * 0.1f + 0.05f;
-        //    if (m_displayClearTime >= m_targetClearTime) {
-        //        m_displayClearTime = m_targetClearTime;
-        //        ScoreRank(); // ここでランク判定し、正しい画像に Init される
-        //        // ここでタイム確定音！
-        //        m_currentPhase = Phase::enRankDisplay; // 次の演出へ
-        //    }
-        //}
-
-		// キル数を表示する場合の処理
-        if (m_killCountFontDraw == true) {
-            ScoreRank(); // ここでランク判定し、正しい画像に Init される
-            // ここでタイム確定音！
-            m_currentPhase = Phase::enRankDisplay; // 次の演出へ
-        }
+        // --- 2. 撃破数の表示 ---
+        // 撃破数はカウントアップ演出をせずそのまま出すので、ここでランク判定して次へ進む。
+        ScoreRank(); // ここでランク判定し、正しい画像に Init される
+        m_currentPhase = Phase::enRankDisplay; // 次の演出へ
         break;
 
     case Phase::enRankDisplay:
@@ -179,32 +168,15 @@ void ResultState::Render(RenderContext& rc)
     m_totalScoreFont.SetPosition({ -650.0f, 20.0f, 0.0f });
     m_totalScoreFont.Draw(rc);
 
-    // タイム演出が始まってから（または終わってから）タイムを描画
+    // 撃破数演出が始まってから（または終わってから）撃破数を描画
     if (m_currentPhase >= Phase::enTimeCount) {
-        /*int totalSec = (int)m_displayClearTime;
-        int min = totalSec / 60;
-        int sec = totalSec % 60;
-        int milli = (int)((m_displayClearTime - totalSec) * 100);
-
-        wchar_t timeStr[512];
-        swprintf_s(timeStr, L"CLEAR TIME     %02d : %02d : %02d", min, sec, milli);
-
-        m_clearTimeFont.SetText(timeStr);
-        m_clearTimeFont.SetPosition({ -650.0f, 0.0f, 0.0f });
-        m_clearTimeFont.SetScale(1.0f);
-        m_clearTimeFont.Draw(rc);*/
-
 		// キル数を描画
 		wchar_t killCountStr[256];
-		swprintf_s(killCountStr,256, L"KILL COUNT     %d", int(m_killCount));
+		swprintf_s(killCountStr,256, L"KILL COUNT     %d", m_killCount);
 		m_killCountFont.SetText(killCountStr);
 		m_killCountFont.SetPosition({ -650.0f, -50.0f, 0.0f });
 		m_killCountFont.SetScale(1.0f);
 		m_killCountFont.Draw(rc);
-        //カウントのリセット
-		m_killCount = 0;
-		m_game->m_deathCount = 0;
-		m_killCountFontDraw = true; // キル数を描画したことを記録
     }
 
     // ランク表示フェーズ以降ならランク画像を描画
@@ -225,12 +197,12 @@ void ResultState::ScoreRank()
     else if (m_killCount >= 100){
         m_rank = Rank::enS_Plus;
     }
-	// 50体以上70体未満ならSランク
-    else if (70 > m_killCount && m_killCount >= 50) {
+	// 50体以上ならSランク
+    else if (m_killCount >= 50) {
         m_rank = Rank::enS;
     }
 	// 50体未満ならAランク
-    else { 
+    else {
         m_rank = Rank::enA;
     }
 
