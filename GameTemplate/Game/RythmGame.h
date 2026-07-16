@@ -85,6 +85,11 @@ private:
 	SpriteRender m_missText;
 	SpriteRender m_backSprite;
 
+	// 左下でリズムに乗るキャラ。拍の頭で大きくなって次の拍に向かって縮む。
+	SpriteRender m_uniChara;
+	// 拍に合わせた拡縮の更新。
+	void UpdateBeatChara();
+
 	FontRender m_comboFont;
 	FontRender m_getScoreFont;
 	FontRender m_totalScoreFont;
