@@ -11,6 +11,17 @@ enum EnMoveState {
     m_enMoveState_Num,
 };
 
+namespace {
+    // エフェクト番号。0はmagic_fire（PlayerAttack/EnemyAttackの弾）が使っているので1から振る。
+    const int EFFECT_NO_DEATH = 1;  // 撃破時の爆散
+    const int EFFECT_NO_HIT = 2;    // 被弾時のヒット
+
+    const Vector3 DEATH_EFFECT_SCALE = { 40.0f, 40.0f, 40.0f };
+    const Vector3 HIT_EFFECT_SCALE = { 15.0f, 15.0f, 15.0f };
+    // エフェクトを敵の胴体あたりに出すための高さ。
+    const float EFFECT_HEIGHT = 80.0f;
+}
+
 //コリジョンオブジェクトを消すためにデストラクタが必要
 Enemy::~Enemy()
 {
@@ -43,6 +54,9 @@ bool Enemy::Start() {
 
     m_enemyManager = FindGO<EnemyManager>("EnemyManager");
 
+    // エフェクトの登録。中でマップ登録済みかを見ているので、敵ごとに呼んでも二重読み込みにはならない。
+    EffectEngine::GetInstance()->ResistEffect(EFFECT_NO_DEATH, u"Assets/Karieffect/efk/magic_explo04.efk");
+    EffectEngine::GetInstance()->ResistEffect(EFFECT_NO_HIT, u"Assets/Karieffect/efk/enemy_slash_01.efk");
 
     // --- HPバーの初期化 ---
     // 背景（Assets/Image/hp_back.dds などを用意してください）
@@ -101,6 +115,8 @@ void Enemy::ManageState()
     // 1. 死亡判定
     if (m_hp <= 0) {
         m_enemyState = 3;
+        // 撃破の手応えを出すために爆散させる。
+        PlayEffect(EFFECT_NO_DEATH, DEATH_EFFECT_SCALE, m_position + Vector3(0.0f, EFFECT_HEIGHT, 0.0f));
         if (m_enemyManager) {
             m_enemyManager->OnEnemyDestroy(this);
             m_enemyManager->CountUpDeathCount();
@@ -241,6 +257,22 @@ void Enemy::OnDamage(int damage)
 {
 	if (m_hp <= 0) return; // すでに死んでいる場合は無視
 	m_hp -= damage;
+
+	// 当たった感触を出す。死亡時は爆散エフェクトの方を出すので、ここでは出さない。
+	if (m_hp > 0) {
+		PlayEffect(EFFECT_NO_HIT, HIT_EFFECT_SCALE, m_position + Vector3(0.0f, EFFECT_HEIGHT, 0.0f));
+	}
+}
+
+// 指定のエフェクトをその場所で再生する。
+// EffectEmitterは再生が終わると自分でDeleteGOするので、ポインタを持たずに投げっぱなしにする。
+void Enemy::PlayEffect(int effectNo, const Vector3& scale, const Vector3& pos)
+{
+	auto* effect = NewGO<EffectEmitter>(0);
+	effect->Init(effectNo);
+	effect->SetScale(scale);
+	effect->SetPosition(pos);
+	effect->Play();
 }
 
 void Enemy::UpdateHPBar() {

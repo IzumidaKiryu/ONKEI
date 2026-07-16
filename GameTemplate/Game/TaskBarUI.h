@@ -27,7 +27,9 @@ private:
     FontRender m_taskFont;//「敵をたくさん倒そう！」のテキスト
     FontRender m_killFont;//「倒した数 12」のテキスト（ラベルと数値をまとめて描く）
 	FontRender m_gameTimerFont;//「残り：60秒」のテキスト
+	FontRender m_chainFont;//「12 CHAIN x1.9」のテキスト。連続撃破中だけ出す。
 
 	int m_killCount = 0; // 現在のキル数
 	float m_remainTime = 0.0f; // 残り時間（秒）
+	int m_chainCount = 0; // 現在の連続撃破数
 };

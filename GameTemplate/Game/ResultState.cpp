@@ -87,8 +87,8 @@ void ResultState::Update(Game* game)
     case Phase::enWaitInput:
         // --- 4. 入力待ち ---
         if (g_pad[0]->IsTrigger(enButtonA) && m_isChangeFlag == false) {
-			//ボタンを押したときの効果音を鳴らす
-            g_soundEngine->ResistWaveFileBank(6, "Assets/sound/TitleBGM.wav");
+			//ボタンを押したときの効果音を鳴らす（TitleStateと同じタップ音）
+            g_soundEngine->ResistWaveFileBank(6, "Assets/sound/buttonTap.wav");
             m_tapSound = NewGO<SoundSource>(6); 
             m_tapSound->Init(6);
             m_tapSound->Play(false);
