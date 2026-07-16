@@ -21,8 +21,9 @@ public:
     void PopState();
     IGameState* GetCurrentState() { return m_currentState; }
 
+	int m_deathCount = 0; // 死亡数をカウントする変数
     int m_deathflag = 0; // 死亡フラグを追加
-    float m_gameTimer = 0.0f;//プレイ時間加算用変数
+    float m_gameTimer = 120.0f;//プレイ時間加算用変数
     float m_scoreTimer = 0.0f;//クリアした時間を取得するための変数
 private:  
     IGameState* m_currentState = nullptr; // unique_ptrをやめる

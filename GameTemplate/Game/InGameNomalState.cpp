@@ -8,11 +8,13 @@
 #include "ResultState.h"
 #include "InGameBossState.h"
 #include "InGameRythmState.h"
+#include "ResultState.h"
 #include "Stage.h"
 #include "SkillButton.h"
 #include "TaskBarUI.h"
 #include "StartUI.h"
 #include "ClearUI.h"
+#include "sound/SoundEngine.h"
 
 namespace
 {
@@ -68,8 +70,6 @@ void InGameNomalState::Update(Game* game) {
 	//ゲーム開始したなら、処理を行う。
 	if (m_isGameStart) {
 
-		
-
 		//敵のスポーン
 		SpawnEnemy();
 		//ゲームUIの作成
@@ -81,7 +81,8 @@ void InGameNomalState::Update(Game* game) {
 
 		//ゲームオーバー、ゲームクリアのフラグが立っているかを確認して、立っていたらそれぞれのステートに遷移する
 		if (m_isGameOver == true) {
-			m_game->m_scoreTimer = m_game->m_gameTimer;//スコアタイムを記録
+			//EnemyManagerのキル数をGameのm_deathCountに渡す
+			m_game->m_deathCount = m_enemyManager->GetDeathCount();
 			m_enemyManager->ClearAllEnemies();
 			m_game->ChangeState(new ResultState(ResultState::ResultType::enGameOver));
 			m_isGameOver = false; // フラグをリセットしておく（次のプレイでゲームオーバーになったときに正しく遷移するように）
@@ -96,14 +97,15 @@ void InGameNomalState::Update(Game* game) {
 			if (!m_isClearUI) {
 				m_clearUI = NewGO<ClearUI>(0, "clearUI");
 				m_clearUI->Init();
-				m_game->m_gameTimer = m_game->m_gameTimer;//プレイ時間の記録を一時停止
 				m_isClearUI = true;
 			}
 			// 2. 生成済みなら、生成処理とは別にタイマーをチェックする
 			else {
 				// m_clearUI はすでに存在するので安全
 				if (m_clearUI->m_clearUITimer >= 3.0f) {
-					m_game->ChangeState(new InGameBossState());
+					//EnemyManagerのキル数をGameのm_deathCountに渡す
+					m_game->m_deathCount = m_enemyManager->GetDeathCount();
+					m_game->ChangeState(new ResultState(ResultState::ResultType::enClear));
 					m_isGameClear = false;
 					return; // 遷移したら即終了
 				}
@@ -112,8 +114,13 @@ void InGameNomalState::Update(Game* game) {
 		//判定が何もないなら
 		else {
 
-			//スコアタイマーを加算
-			m_game->m_gameTimer += g_gameTime->GetFrameDeltaTime();
+			//ゲーム時間を減算
+			m_game->m_gameTimer -= g_gameTime->GetFrameDeltaTime();
+
+			//ゲーム時間が0以下になったら0にする。
+			if (m_game->m_gameTimer <= 0.0f) {
+				m_game->m_gameTimer = 0.0f;
+			}
 		}
 
 		//スキルゲージが100溜まったら
@@ -239,8 +246,8 @@ void InGameNomalState::UpdateSPButton()
 
 void InGameNomalState::StageClear()
 {
-	//敵を何体倒したらクリアにするかの変数と、EnemyManagerの死亡数カウントを比較して、クリア条件を満たしているか確認する。
-	if (m_CrearCount <= m_enemyManager->GetDeathCount()&&m_isChangeIsReady==false) {
+	//ゲーム時間が0になったらステージクリアにする。
+	if (m_game->m_gameTimer <= 0.0f &&m_isChangeIsReady==false) {
 		//ステージクリアの処理を行う。
 		//ResetFlags();//フラグをリセットする。
 		m_isGameClear = true;

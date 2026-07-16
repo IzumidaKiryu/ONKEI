@@ -8,7 +8,7 @@ namespace
     //ゲージのピボット。
     const Vector2 GAGE_PIVOT = { 0.0f, 0.5f };
     // タスクバーの表示位置
-    const Vector3 UI_POSITION = { 400.0f, 300.0f, 0.0f }; // 左上あたり
+    const Vector3 UI_POSITION = { 500.0f, 300.0f, 0.0f }; // 左上あたり
 	// 区切りの表示位置
 	const Vector3 PARTITION_POSITION = { 550.0f, 340.0f, 0.0f }; // タスクバーの上あたり
 	//フォントの表示位置
@@ -28,7 +28,13 @@ namespace
     const Vector3 KILL_FONT_POSITION = { 300.0f,325.0f,0.0f };
     //　進捗：のフォントサイズ
     const float KILL_SIZE = 1.0f;
-    
+
+	// 現在のキル数の表示位置
+	const Vector3 KILL_ENEMY_FONT_POSITION = { 400.0f,325.0f,0.0f };
+
+	// 残り時間の表示位置
+	const Vector3 GAME_TIMER_FONT_POSITION = { 400.0f,275.0f,0.0f };
+
 }
 
 TaskBarUI::TaskBarUI() {
@@ -67,13 +73,29 @@ void TaskBarUI::Init()
     m_taskFont.SetScale(FONT_SIZE);
     m_taskFont.SetColor(COLOR_GREEN);
 
-    //進捗：の初期化
+    //倒した数：の初期化
     wchar_t killDescription[256];
-    std::wstring kill = L"進捗";
+    std::wstring kill = L"倒した数 ";
     m_killFont.SetText(kill.c_str());
     m_killFont.SetPosition(KILL_FONT_POSITION);
     m_killFont.SetScale(KILL_SIZE);
     m_killFont.SetColor(COLOR_WHITE);
+
+	////現在のキル数の初期化
+	//wchar_t killEnemyDescription[256];
+	//std::wstring killEnemy = L"0";
+	//m_killEnemyFont.SetText(killEnemy.c_str());
+	//m_killEnemyFont.SetPosition(KILL_ENEMY_FONT_POSITION);
+	//m_killEnemyFont.SetScale(KILL_SIZE);
+	//m_killEnemyFont.SetColor(COLOR_WHITE);
+
+	//// 残り時間の初期化
+	//wchar_t gameTimerDescription[256];
+	//std::wstring gameTimer = L"残り：";
+	//m_gameTimerFont.SetText(gameTimer.c_str());
+	//m_gameTimerFont.SetPosition(GAME_TIMER_FONT_POSITION);
+	//m_gameTimerFont.SetScale(KILL_SIZE);
+	//m_gameTimerFont.SetColor(COLOR_WHITE);
 
     // 参照を取得
     m_enemyManager = FindGO<EnemyManager>("EnemyManager");
@@ -88,7 +110,7 @@ void TaskBarUI::Update()
 
     // 1. 現在の撃破数を取得
     m_killCount = static_cast<float>(m_enemyManager->m_deathCount);
-	m_killMax = 20;
+	m_killMax = 200;
 
 	// 2. 撃破数の割合を計算
 	float wari = (float)m_killCount / (float)m_killMax;
@@ -104,6 +126,18 @@ void TaskBarUI::Update()
 		m_killCount = m_killMax;
 
     }
+
+	//// 5. 現在のキル数をフォントに反映
+	//wchar_t killEnemyStr[256];
+	//swprintf_s(killEnemyStr, L"%d", m_killCount);
+	//m_killEnemyFont.SetText(killEnemyStr);
+
+ //   // 6. ゲーム時間の表示を更新
+	//wchar_t gameTimerStr[256];
+	//swprintf_s(gameTimerStr, L"残り：%d秒");
+	//m_gameTimerFont.SetText(gameTimerStr);
+
+
 
 	// 更新処理
     m_backBar.Update();

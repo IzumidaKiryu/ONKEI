@@ -1,5 +1,8 @@
 #pragma once
 #include "GameState.h"
+#include "sound/SoundSource.h"
+
+class Game;
 
 // リザルト画面の状態を管理するクラス
 class ResultState : public IGameState
@@ -12,7 +15,6 @@ public:
         enNum
     };
 
-public:
     ResultState(ResultType type);
     ~ResultState() = default;
 
@@ -26,6 +28,9 @@ public:
         m_targetClearTime = time;
     }
 	void ScoreRank(); //スコアに応じてランクを決定する関数
+
+    int m_killCount = 0; //キル数を格納する変数
+
 private:
 	Game* m_game = nullptr;              // ゲームクラスへのポインタ
     ResultType m_resultType = ResultType::enNum;
@@ -37,9 +42,18 @@ private:
     // フォント関係
     FontRender m_totalScoreFont;        // スコア用
     FontRender m_clearTimeFont;         // タイム用
+	FontRender m_killCountFont;        // キル数用
+	bool m_killCountFontDraw = false; //キル数を描画するかどうかのフラグ
 
     FontRender m_ButtonFont; //Prees a buttonの文字を描画するためのFontRender
     Vector4 m_fontColor = { 1.0f, 1.0f, 1.0f, 1.0f }; //文字の色
+
+	// サウンド関係
+	SoundSource* m_resultSound; //リザルト画面のBGM
+	SoundSource* m_timerSound; //タイマーの効果音
+	SoundSource* m_rankSound; //ランク表示の効果音
+	SoundSource* m_tapSound; //ボタンを押したときの効果音
+
     float m_timer = 0.0f; //タイマー
     float m_maxTitleTime = 2.0f; //タイトルの最大時間
 
